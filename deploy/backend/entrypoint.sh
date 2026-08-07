@@ -1,0 +1,62 @@
+#!/bin/sh
+#
+# Shared entrypoint for both backend Dokploy services.
+#
+# MEDUSA_WORKER_MODE=server -> runs migrations, then serves API + Admin
+# MEDUSA_WORKER_MODE=worker -> waits for migrations, then runs background jobs
+#
+# Only the server instance migrates, so the two services can never race
+# each other on the same database.
+#
+set -e
+
+MODE="${MEDUSA_WORKER_MODE:-shared}"
+
+echo "[medusa] worker mode: $MODE"
+
+wait_for_db() {
+  echo "[medusa] waiting for database..."
+  i=0
+  until node -e "
+const { Client } = require('pg');
+const c = new Client({ connectionString: process.env.DATABASE_URL });
+c.connect().then(() => c.end()).catch(() => process.exit(1));
+" 2>/dev/null; do
+    i=$((i + 1))
+    if [ "$i" -ge 60 ]; then
+      echo "[medusa] database unreachable after 60 attempts, giving up" >&2
+      exit 1
+    fi
+    sleep 2
+  done
+  echo "[medusa] database is up"
+}
+
+wait_for_db
+
+case "$MODE" in
+  worker)
+    # Give the server instance a head start so migrations land first.
+    echo "[medusa] worker: waiting ${WORKER_START_DELAY:-20}s for migrations"
+    sleep "${WORKER_START_DELAY:-20}"
+    ;;
+  *)
+    echo "[medusa] running migrations + syncing links"
+    npx medusa db:migrate
+
+    if [ "${MEDUSA_SEED:-false}" = "true" ]; then
+      echo "[medusa] seeding (MEDUSA_SEED=true)"
+      npx medusa exec ./src/scripts/seed.js || \
+        echo "[medusa] seed skipped/failed, continuing"
+    fi
+
+    if [ -n "${MEDUSA_ADMIN_EMAIL:-}" ] && [ -n "${MEDUSA_ADMIN_PASSWORD:-}" ]; then
+      echo "[medusa] ensuring admin user ${MEDUSA_ADMIN_EMAIL}"
+      npx medusa user -e "$MEDUSA_ADMIN_EMAIL" -p "$MEDUSA_ADMIN_PASSWORD" || \
+        echo "[medusa] admin user already exists, continuing"
+    fi
+    ;;
+esac
+
+echo "[medusa] starting"
+exec npx medusa start
