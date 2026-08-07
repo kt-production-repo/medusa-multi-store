@@ -51,10 +51,25 @@ ENV NODE_ENV=production
 RUN yarn build
 
 # `medusa build` emits a self-contained app (with its own generated
-# package.json) into .medusa/server. Per Medusa's deployment guide the deps
-# there are installed with npm — the root yarn 4 lockfile does not describe
-# this generated manifest, so yarn must not be used here.
-RUN cd .medusa/server && npm install --omit=dev --no-audit --no-fund
+# package.json) into .medusa/server, whose dependencies are a SUBSET of the
+# ones yarn already installed at /server/node_modules.
+#
+# Re-downloading that whole tree from npm is what triggers HTTP 429
+# (rate limit) on the registry, so instead we reuse the modules yarn
+# already fetched. This also preserves the natively-compiled binaries
+# (@swc/core, esbuild, msgpackr-extract, protobufjs) so they are not
+# rebuilt.
+#
+# The subsequent npm install only fills genuine gaps; with a warm
+# node_modules it is normally a no-op and makes no network calls.
+RUN npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm config set fetch-timeout 600000
+
+RUN cp -a node_modules .medusa/server/node_modules && \
+    cd .medusa/server && \
+    npm install --omit=dev --no-audit --no-fund --prefer-offline
 
 # ---------------------------------------------------------------- runtime
 FROM node:20-alpine AS runtime
