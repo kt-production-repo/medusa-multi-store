@@ -68,9 +68,24 @@ COPY --from=builder --chown=nextjs:nodejs /app/check-env-variables.js ./check-en
 
 USER nextjs
 
+# next.config.js calls checkEnvVariables() at module load, and `next start`
+# loads next.config.js too — not just `next build`. So the publishable key
+# must be present at RUNTIME as well, or the process exits on boot and
+# Traefik reports 502 Bad Gateway.
+#
+# ARG values do not survive into this stage (it is a fresh FROM), so the
+# build args are re-declared here and baked in as defaults. Dokploy runtime
+# environment variables still override these.
+ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+ARG NEXT_PUBLIC_BASE_URL
+ARG NEXT_PUBLIC_DEFAULT_REGION=us
+
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
-    PORT=8000
+    PORT=8000 \
+    NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY} \
+    NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL} \
+    NEXT_PUBLIC_DEFAULT_REGION=${NEXT_PUBLIC_DEFAULT_REGION}
 
 EXPOSE 8000
 
