@@ -54,7 +54,8 @@ needs a real publishable key and at least one region to exist first.
 
 ## Agent skills
 
-19 skills live in `.opencode/skills/` (mirrored to `.claude/` and `.agents/`).
+19 skills live under `.opencode/skills/medusa/` (mirrored to `.claude/` and
+`.agents/`).
 
 Start with the `medusa` skill — it documents this repo's overlay architecture,
 Dokploy topology and vendor API. The other 18 are the official
@@ -62,7 +63,7 @@ Dokploy topology and vendor API. The other 18 are the official
 vendored so every contributor gets identical guidance with no install step.
 
 Treat the official skills as read-only; re-sync rather than edit. See
-`.opencode/skills/README.md`.
+`.opencode/skills/medusa/README.md`.
 
 ## Conventions
 
