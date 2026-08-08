@@ -87,6 +87,125 @@ overlay/backend/src/
 Vendor admins are a **custom actor type** (`"vendor"`), authenticated via
 `/auth/vendor/emailpass`. See `overlay/backend/src/api/middlewares.ts`.
 
+## Medusa building blocks
+
+All patterns below are verified against the code in `overlay/backend/src/`.
+
+### Data model
+
+```ts
+// overlay/backend/src/modules/<mod>/models/thing.ts
+import { model } from "@medusajs/framework/utils"
+
+const Thing = model.define("thing", {
+  id: model.id().primaryKey(),
+  handle: model.text().unique(),
+  name: model.text(),
+  logo: model.text().nullable(),
+  admins: model.hasMany(() => Admin, { mappedBy: "thing" }),
+})
+export default Thing
+```
+
+Relations: `hasMany` / `belongsTo` / `hasOne` / `manyToMany`. The string passed
+to `define` is the table name.
+
+### Service
+
+```ts
+import { MedusaService } from "@medusajs/framework/utils"
+
+class MyModuleService extends MedusaService({ Thing }) {}
+export default MyModuleService
+```
+
+`MedusaService` generates CRUD automatically. A model named `Vendor` yields
+`createVendors`, `listVendors`, `retrieveVendor`, `updateVendors`,
+`deleteVendors` — note the **plural** on create/update/delete.
+
+### Module definition
+
+```ts
+import { Module } from "@medusajs/framework/utils"
+
+export const MY_MODULE = "my_module"
+export default Module(MY_MODULE, { service: MyModuleService })
+```
+
+Register it in `overlay/backend/medusa-config.ts` under `modules`, never in
+`apps/backend/medusa-config.ts`.
+
+### Module links
+
+Modules are isolated; never import another module's models. Link them:
+
+```ts
+// overlay/backend/src/links/thing-product.ts
+import { defineLink } from "@medusajs/framework/utils"
+import MyModule from "../modules/my-module"
+import ProductModule from "@medusajs/medusa/product"
+
+export default defineLink(
+  MyModule.linkable.thing,
+  { linkable: ProductModule.linkable.product.id, isList: true }
+)
+```
+
+### Workflows and steps
+
+Business logic goes in workflows, not directly in API routes.
+
+```ts
+const createThingStep = createStep(
+  "create-thing",
+  async (input: Input, { container }) => {
+    const service = container.resolve(MY_MODULE)
+    const thing = await service.createThings(input)
+    return new StepResponse(thing, thing.id)   // 2nd arg → compensation
+  },
+  async (thingId, { container }) => {          // rollback on failure
+    if (!thingId) return
+    await container.resolve(MY_MODULE).deleteThings(thingId)
+  }
+)
+```
+
+Rules that bite:
+- Never manipulate variables directly in a workflow body — use `transform`.
+- Every step that writes should have a compensation function.
+- Reuse a step in one workflow via `.config({ name: "unique-name" })`.
+
+### API routes
+
+```ts
+// overlay/backend/src/api/things/route.ts  →  /things
+export const POST = async (
+  req: AuthenticatedMedusaRequest<Body>,
+  res: MedusaResponse
+) => {
+  const { result } = await createThingWorkflow(req.scope).run({
+    input: req.validatedBody,
+  })
+  res.json({ thing: result })
+}
+```
+
+Validate with zod imported from **`@medusajs/framework/zod`** (required since
+v2.13.0), wired up in `overlay/backend/src/api/middlewares.ts` via
+`validateAndTransformBody`.
+
+### Migrations
+
+After changing a data model:
+
+```bash
+npx medusa db:generate <module-name>   # writes to the module's migrations/
+npx medusa db:migrate                  # applies + syncs links
+```
+
+Commit the generated migration. In production the entrypoint runs
+`db:migrate` automatically on the **server** instance only.
+
 ## Build-time vs runtime environment variables
 
 This distinction has caused two separate production outages in this project.
@@ -143,6 +262,70 @@ Copy the real value from the Dokploy UI (Application → General → App Name, o
 Database → Internal Connection URL). Never `localhost`, never a host IP.
 Internal traffic is plain `http` — TLS terminates at Traefik.
 
+## Vendor API surface
+
+Added by the overlay. Vendor admins are a custom actor type, so they use
+`/auth/vendor/*`, not the admin or customer auth routes.
+
+| Method | Route | Purpose |
+|---|---|---|
+| `POST` | `/auth/vendor/emailpass/register` | Registration token (unregistered) |
+| `POST` | `/auth/vendor/emailpass` | Authenticated token |
+| `POST` | `/vendors` | Create vendor + first admin |
+| `GET` `POST` | `/vendors/products` | List / create that vendor's products |
+| `GET` | `/vendors/orders` | That vendor's split orders |
+| `DELETE` | `/vendors/admins/:id` | Remove a vendor admin |
+| `POST` | `/store/carts/:id/complete-vendor` | Checkout, splitting per vendor |
+
+Three-step vendor onboarding:
+
+```bash
+# 1. registration token (no account yet)
+curl -X POST https://<api>/auth/vendor/emailpass/register \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"v@example.com","password":"secret"}'
+
+# 2. create the vendor, passing that token
+curl -X POST https://<api>/vendors \
+  -H "Authorization: Bearer <token>" -H 'Content-Type: application/json' \
+  -d '{"name":"Acme","handle":"acme","admin":{"email":"v@example.com"}}'
+
+# 3. real auth token for subsequent calls
+curl -X POST https://<api>/auth/vendor/emailpass \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"v@example.com","password":"secret"}'
+```
+
+No trailing slash on these URLs — it bypasses the route middleware.
+
+Order splitting: `POST /store/carts/:id/complete-vendor` groups cart items by
+each product's linked vendor, creates the parent order, then one child order
+per vendor. Single-vendor carts skip the child orders and link the parent
+directly.
+
+## Local development
+
+```bash
+./scripts/bootstrap.sh                 # first time: pull upstream into apps/
+cd apps/backend && yarn install
+cp .env.template .env                  # set DATABASE_URL, REDIS_URL
+```
+
+`apps/backend/.env` is gitignored, so this does not dirty the subtree.
+
+To run the marketplace code locally, the overlay must be present in
+`apps/backend/src/`. Since that directory is read-only, either work through
+Docker (`docker compose up --build`), or copy the overlay in temporarily and
+delete it before committing:
+
+```bash
+cp -r overlay/backend/src/* apps/backend/src/     # temporary only
+git status --porcelain apps/                      # MUST be empty before commit
+```
+
+Prefer Docker. Accidentally committing the overlay into `apps/` breaks
+`update-upstream.sh` forever.
+
 ## Debugging checklist
 
 Before assuming a code bug, check these in order:
@@ -190,4 +373,7 @@ edited locally. Preserve that invariant.
 - No code comments unless they explain a non-obvious "why".
 - Shell scripts: `set -euo pipefail`, idempotent.
 - Never commit secrets; `env/*.env.example` holds placeholders only.
-- Generic Medusa API questions → use the `building-with-medusa` skill.
+- Official docs: <https://docs.medusajs.com> · marketplace recipe:
+  <https://docs.medusajs.com/resources/recipes/marketplace/examples/vendors>
+- Deeper Medusa skills are installable on demand:
+  `npx skills add medusajs/medusa-agent-skills`
