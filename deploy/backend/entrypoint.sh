@@ -46,8 +46,17 @@ case "$MODE" in
 
     if [ "${MEDUSA_SEED:-false}" = "true" ]; then
       echo "[medusa] seeding (MEDUSA_SEED=true)"
-      npx medusa exec ./src/scripts/seed.js || \
-        echo "[medusa] seed skipped/failed, continuing"
+      # `medusa build` compiles src/scripts/seed.ts to .js, but older/newer
+      # builds have shipped it at either path. Try both rather than guessing.
+      if [ -f ./src/scripts/seed.js ]; then
+        npx medusa exec ./src/scripts/seed.js || \
+          echo "[medusa] seed failed, continuing"
+      elif [ -f ./src/scripts/seed.ts ]; then
+        npx medusa exec ./src/scripts/seed.ts || \
+          echo "[medusa] seed failed, continuing"
+      else
+        echo "[medusa] no seed script found, skipping"
+      fi
     fi
 
     if [ -n "${MEDUSA_ADMIN_EMAIL:-}" ] && [ -n "${MEDUSA_ADMIN_PASSWORD:-}" ]; then
