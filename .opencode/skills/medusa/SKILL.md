@@ -375,5 +375,21 @@ edited locally. Preserve that invariant.
 - Never commit secrets; `env/*.env.example` holds placeholders only.
 - Official docs: <https://docs.medusajs.com> · marketplace recipe:
   <https://docs.medusajs.com/resources/recipes/marketplace/examples/vendors>
-- Deeper Medusa skills are installable on demand:
-  `npx skills add medusajs/medusa-agent-skills`
+
+## Related skills
+
+The 18 official Medusa skills are vendored alongside this one. Load them for
+depth beyond this repo's specifics:
+
+| Task | Skill |
+|------|-------|
+| Backend modules, workflows, data models | `building-with-medusa` |
+| Admin widgets and UI routes | `building-admin-dashboard-customizations` |
+| Storefront integration | `building-storefronts` |
+| Ecommerce UX patterns | `storefront-best-practices` |
+| Learning Medusa from scratch | `learning-medusa` |
+| Migrations | `db-generate`, `db-migrate` |
+| Admin users | `new-user` |
+
+The `mcloud-*` skills cover Medusa Cloud and do not apply here — this project
+self-hosts on Dokploy. See `.opencode/skills/README.md`.

@@ -52,6 +52,18 @@ Databases → backend-server → backend-worker → storefront.
 The storefront build calls the live backend via `generateStaticParams`, so it
 needs a real publishable key and at least one region to exist first.
 
+## Agent skills
+
+19 skills live in `.opencode/skills/` (mirrored to `.claude/` and `.agents/`).
+
+Start with the `medusa` skill — it documents this repo's overlay architecture,
+Dokploy topology and vendor API. The other 18 are the official
+[medusajs/medusa-agent-skills](https://github.com/medusajs/medusa-agent-skills),
+vendored so every contributor gets identical guidance with no install step.
+
+Treat the official skills as read-only; re-sync rather than edit. See
+`.opencode/skills/README.md`.
+
 ## Conventions
 
 - Do not add code comments unless they explain a non-obvious "why".
