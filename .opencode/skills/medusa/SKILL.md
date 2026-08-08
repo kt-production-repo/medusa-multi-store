@@ -8,6 +8,27 @@ description: Use when working on this Medusa 2 multi-vendor marketplace repo —
 Deployment repo for a multi-vendor Medusa 2 store running on Dokploy as five
 separate container services.
 
+## Repository layout
+
+```
+medusa/
+├── apps/                          # OFFICIAL CODE — never edit
+│   ├── backend/                   #   medusa-starter-default @ master
+│   └── storefront/                #   nextjs-starter-medusa @ main
+├── overlay/backend/               # ours, merged in at Docker build time
+│   ├── medusa-config.ts           #   replaces the upstream file, in-image only
+│   └── src/                       #   marketplace recipe (additive paths only)
+├── deploy/
+│   ├── backend/Dockerfile         #   one image, two services
+│   ├── backend/entrypoint.sh      #   migrate-then-start / worker-wait
+│   └── storefront/Dockerfile
+├── env/                           # .env.example per Dokploy service
+├── scripts/                       # bootstrap / update-upstream / check-overlay
+├── .opencode/skills/              # agent skills (this file)
+├── docker-compose.yml             # optional single-service alternative
+└── AGENTS.md                      # project rules
+```
+
 ## The one rule that governs everything
 
 `apps/` holds the **official Medusa repositories**, vendored with
@@ -128,8 +149,9 @@ Before assuming a code bug, check these in order:
 
 1. **502 Bad Gateway** → container exited on boot. Check runtime env vars,
    especially `NEXT_PUBLIC_*`.
-2. **500 on every storefront route** → `src/middleware.ts` runs on all
-   requests and fetches `/store/regions`. Almost always: no regions exist, or
+2. **500 on every storefront route** → `apps/storefront/src/middleware.ts`
+   runs on all requests and fetches `/store/regions`. Almost always: no
+   regions exist, or
    `NEXT_PUBLIC_DEFAULT_REGION` doesn't match any seeded country.
 3. **400 from `/store/*`** → missing or invalid `x-publishable-api-key`, or the
    key has no sales channel attached.
