@@ -28,6 +28,7 @@ medusa/
 ├── deploy/
 │   ├── backend/Dockerfile         # one image, two services (server + worker)
 │   ├── backend/entrypoint.sh      # migrate-then-start / worker-wait logic
+│   ├── meilisearch/Dockerfile     # standalone Meilisearch search engine
 │   └── storefront/Dockerfile      # Next.js standalone build
 │
 ├── env/                           # .env.example per Dokploy service
@@ -72,15 +73,16 @@ fetched, which is why subtrees are used here).
 
 ## 3. Dokploy services
 
-Create **one project** with **six services**. Postgres, Redis and Meilisearch are
-native Dokploy Databases; the other three are Applications built from this one
-repo using different Dockerfiles.
+Create **one project** with **six services**. Postgres and Redis are native
+Dokploy Databases; Meilisearch and the other three are Applications built from
+this one repo using different Dockerfiles. (Meilisearch is a search engine, not
+a relational database, so it runs as an Application — see §3.2.)
 
 | # | Service | Dokploy type | Dockerfile | Port | Domain |
 |---|---------|--------------|-----------|------|--------|
 | 1 | `medusa-postgres` | Database → Postgres | — | 5432 | none |
 | 2 | `medusa-redis` | Database → Redis | — | 6379 | none |
-| 3 | `medusa-meilisearch` | Database → Meilisearch | — | 7700 | none |
+| 3 | `medusa-meilisearch` | Application | `deploy/meilisearch/Dockerfile` | 7700 | none |
 | 4 | `medusa-backend-server` | Application | `deploy/backend/Dockerfile` | 9000 | `api.example.com` |
 | 5 | `medusa-backend-worker` | Application | `deploy/backend/Dockerfile` | — | **none** |
 | 6 | `medusa-storefront` | Application | `deploy/storefront/Dockerfile` | 8000 | `shop.example.com` |
@@ -105,15 +107,33 @@ exposed to the internet.
 
 ### 3.2 Meilisearch
 
-Create → Database → Meilisearch (`getmeili/meilisearch:v1.53.0`), open its page
-and copy the **Internal Connection URL** (`http://medusa-meilisearch:7700`) and
-the master API key into `MEILISEARCH_HOST` / `MEILISEARCH_API_KEY` on **both**
-backend services. Leave *External Port* empty.
+**Option C — Application** (the one this repo supports): create → Application
+→ Git provider → this repo, then:
 
-The `meilisearch` JS client is `yarn add`-ed inside the Docker image only
+- **Build Type**: `Dockerfile`
+- **Dockerfile Path**: `deploy/meilisearch/Dockerfile`
+- **Docker Context Path**: `.`
+- **Environment**: paste `env/meilisearch.env.example` — set `MEILI_MASTER_KEY`
+  (`openssl rand -base64 32`).
+- **Volumes**: add an *Empty Volume* mounted at `/meili_data` (the search index
+  lives here; it survives redeploys).
+- **Domains**: **none** — never expose the search engine publicly.
+
+After it's up, open **Application → General → App Name** and copy the generated
+internal hostname (e.g. `http://medusa-meilisearch-<suffix>:7700`) into
+`MEILISEARCH_HOST` on **both** backend services, and set `MEILISEARCH_API_KEY` to
+the same `MEILI_MASTER_KEY`.
+
+> Note: Meilisearch is **not** a native Dokploy Database (only Postgres, MySQL,
+> MariaDB, MongoDB, Redis/libsql are). The older "Database → Meilisearch" menu
+> does not exist in current Dokploy; deploy it as an Application like the other
+> services here. For a local all-in-one stack, `docker-compose.yml` already
+> includes the `meilisearch` service instead.
+
+The `meilisearch` JS client is `yarn add`-ed inside the backend image only
 (`deploy/backend/Dockerfile`), so `apps/backend/package.json` stays upstream.
 
-### 3.2 Backend server
+### 3.3 Backend server
 
 Create → Application → Git provider → this repo.
 
@@ -130,7 +150,7 @@ Create → Application → Git provider → this repo.
 Admin bundle, so setting it only at runtime leaves the dashboard calling the
 wrong host.
 
-### 3.3 Backend worker
+### 3.4 Backend worker
 
 Same repo, same Dockerfile, different variables.
 
@@ -145,7 +165,7 @@ must point at the same Postgres and Redis.
 Only the server runs `db:migrate`; the worker waits `WORKER_START_DELAY` seconds
 first, so the two can never race on the same schema.
 
-### 3.4 Storefront
+### 3.5 Storefront
 
 - **Dockerfile Path**: `deploy/storefront/Dockerfile`
 - **Docker Context Path**: `.`
@@ -277,6 +297,7 @@ rebuild the storefront:
 |---------|-------------|
 | `medusa-backend-server` | `apps/backend/**`, `overlay/backend/**`, `deploy/backend/**` |
 | `medusa-backend-worker` | `apps/backend/**`, `overlay/backend/**`, `deploy/backend/**` |
+| `medusa-meilisearch` | `deploy/meilisearch/**` |
 | `medusa-storefront` | `apps/storefront/**`, `deploy/storefront/**` |
 
 ---

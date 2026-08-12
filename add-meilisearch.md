@@ -82,3 +82,13 @@ mechanism first). All changes stay on overlay/deploy/env paths so
 - smoke-test validated: seed auto-indexed 4 products via `product.created`; manual
   sync `POST /admin/meilisearch/sync` → 200; `POST /store/products/search` →
   hits; create products → doc count 4→5; delete → 5→4 and search returns 0 hits.
+
+- **Deployment finding**: the `meilisearch` npm package is *only the JS client*;
+  the engine is the standalone `getmeili/meilisearch` server (needs a persistent
+  `/meili_data` volume, HTTP API on :7700), so it **cannot** run inside the Medusa
+  backend process. Verified Meilisearch is **not** a native Dokploy Database
+  (Dokploy native DBs are Postgres/MySQL/MariaDB/MongoDB/Redis/libsql). It is
+  deployed as an Application built from `deploy/meilisearch/Dockerfile` (Option C);
+  docs updated accordingly (README §3.2, env/databases.env.example Meilisearch
+  section, new `env/meilisearch.env.example`). Local/dev composes via
+  `docker-compose.yml` which keeps the `meilisearch` service inline.
