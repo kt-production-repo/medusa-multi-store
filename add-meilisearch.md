@@ -58,6 +58,15 @@ mechanism first). All changes stay on overlay/deploy/env paths so
 - [x] 21. Smoke test: build with meilisearch, seed, POST /admin/meilisearch/sync
       → docs indexed; POST /store/products/search returns hits; create/update/delete
       stays in sync.
+- [x] 21a. Env-file inspection: `backend-server` / `backend-worker` env examples are
+      **not** missing a volume path — Meilisearch persistence is a Docker volume
+      mounted at `/meili_data` on the **engine service** only (not an env var on the
+      backends). The path is documented in `env/meilisearch.env.example`,
+      `docker-compose.yml` (`medusa_meilisearch_data:/meili_data`),
+      `deploy/meilisearch/Dockerfile`, and `README §3.2`. The backend files correctly
+      carry only connection info (`MEILISEARCH_HOST`/`MEILISEARCH_API_KEY`/
+      `MEILISEARCH_PRODUCT_INDEX_NAME`). Optional: add explicit
+      `MEILI_DATA_DIR=/meili_data` to the meilisearch env (currently the image default).
 
 ## Deferred
 
