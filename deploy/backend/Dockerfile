@@ -35,6 +35,11 @@ COPY overlay/backend/src/ ./src/
 #    replace, and only inside the image.
 COPY overlay/backend/medusa-config.ts ./medusa-config.ts
 
+# 5. Meilisearch JS client for our search module. apps/backend/package.json is
+#    upstream and read-only, so we add the dependency in-image only. This
+#    writes to the image's own package.json/yarn.lock — the repo stays clean.
+RUN yarn add meilisearch@0.60.0
+
 # The admin bundle is only needed by the server service. The worker sets
 # this to true so the build skips the (slow, memory-hungry) admin bundle.
 ARG DISABLE_MEDUSA_ADMIN=false

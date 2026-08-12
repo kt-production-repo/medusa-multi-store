@@ -72,17 +72,18 @@ fetched, which is why subtrees are used here).
 
 ## 3. Dokploy services
 
-Create **one project** with **five services**. Postgres and Redis are native
-Dokploy Databases; the other three are Applications built from this one repo
-using different Dockerfiles.
+Create **one project** with **six services**. Postgres, Redis and Meilisearch are
+native Dokploy Databases; the other three are Applications built from this one
+repo using different Dockerfiles.
 
 | # | Service | Dokploy type | Dockerfile | Port | Domain |
 |---|---------|--------------|-----------|------|--------|
 | 1 | `medusa-postgres` | Database → Postgres | — | 5432 | none |
 | 2 | `medusa-redis` | Database → Redis | — | 6379 | none |
-| 3 | `medusa-backend-server` | Application | `deploy/backend/Dockerfile` | 9000 | `api.example.com` |
-| 4 | `medusa-backend-worker` | Application | `deploy/backend/Dockerfile` | — | **none** |
-| 5 | `medusa-storefront` | Application | `deploy/storefront/Dockerfile` | 8000 | `shop.example.com` |
+| 3 | `medusa-meilisearch` | Database → Meilisearch | — | 7700 | none |
+| 4 | `medusa-backend-server` | Application | `deploy/backend/Dockerfile` | 9000 | `api.example.com` |
+| 5 | `medusa-backend-worker` | Application | `deploy/backend/Dockerfile` | — | **none** |
+| 6 | `medusa-storefront` | Application | `deploy/storefront/Dockerfile` | 8000 | `shop.example.com` |
 
 Medusa requires the server/worker split in production: the **server** answers API
 requests and serves the Admin, the **worker** runs scheduled jobs, subscribers and
@@ -90,7 +91,7 @@ workflows. Running both roles in one container double-fires jobs once you scale.
 
 ### Order of operations
 
-Deploy **1 → 2 → 3 → 4 → 5**. The storefront is last because its build needs a
+Deploy **1 → 2 → 3 → 4 → 5 → 6**. The storefront is last because its build needs a
 publishable API key that only exists after the backend is live.
 
 ### 3.1 Databases
@@ -101,6 +102,16 @@ Use `env/databases.env.example` for the credentials.
 After each is deployed, open its page and copy the **Internal Connection URL** —
 that is what the backends use. Leave *External Port* empty so neither database is
 exposed to the internet.
+
+### 3.2 Meilisearch
+
+Create → Database → Meilisearch (`getmeili/meilisearch:v1.53.0`), open its page
+and copy the **Internal Connection URL** (`http://medusa-meilisearch:7700`) and
+the master API key into `MEILISEARCH_HOST` / `MEILISEARCH_API_KEY` on **both**
+backend services. Leave *External Port* empty.
+
+The `meilisearch` JS client is `yarn add`-ed inside the Docker image only
+(`deploy/backend/Dockerfile`), so `apps/backend/package.json` stays upstream.
 
 ### 3.2 Backend server
 
@@ -158,6 +169,7 @@ Dokploy Applications and Databases in the same project resolve each other by
 ```
 DATABASE_URL=postgres://medusa:pass@medusa-postgres:5432/medusa
 REDIS_URL=redis://default:pass@medusa-redis:6379
+MEILISEARCH_HOST=http://medusa-meilisearch:7700
 ```
 
 Never use `localhost` or a host IP — each service is its own container.
@@ -229,6 +241,18 @@ Vendor endpoints added by the overlay:
 | `GET`/`POST` | `/vendors/admins/:id` | Manage vendor admins |
 | `POST` | `/store/carts/:id/complete-vendor` | Checkout, splitting one cart into per-vendor orders |
 
+Meilisearch endpoints added by the overlay:
+
+| Method | Route | Purpose |
+|--------|-------|---------|
+| `POST` | `/store/products/search` | Search products in Meilisearch (`{"q":"..."}`) |
+| `POST` | `/admin/meilisearch/sync` | Emit `meilisearch.sync` → full reindex |
+
+Products are indexed automatically on `product.created` / `product.updated` /
+`product.deleted`. To (re)index everything, hit `POST /admin/meilisearch/sync`
+or use the **Settings → Meilisearch** page in the Admin. The storefront search
+UI is not wired up yet — the search API is ready for any client.
+
 ---
 
 ## 7. Keeping up with upstream
@@ -240,7 +264,7 @@ Vendor endpoints added by the overlay:
 git push
 ```
 
-Then redeploy `backend-server`, `backend-worker` and `storefront` in Dokploy.
+Then redeploy `backend-server`, `backend-worker` and `storefront` in Dokploy — plus `medusa-meilisearch` if you bump the search engine image tag.
 
 Because `apps/` is never edited locally, these pulls are fast-forwards. The only
 thing that can break is a genuine Medusa API change, which `check-overlay.sh`

@@ -99,5 +99,15 @@ module.exports = defineConfig({
     {
       resolve: "./src/modules/marketplace",
     },
+    // Self-hosted Meilisearch search (meilisearch JS client is yarn-added
+    // inside the image only — apps/backend/package.json stays upstream).
+    {
+      resolve: "./src/modules/meilisearch",
+      options: {
+        host: process.env.MEILISEARCH_HOST!,
+        apiKey: process.env.MEILISEARCH_API_KEY!,
+        productIndexName: process.env.MEILISEARCH_PRODUCT_INDEX_NAME!,
+      },
+    },
   ],
 })

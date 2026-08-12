@@ -43,6 +43,23 @@ services:
       timeout: 5s
       retries: 10
 
+  meilisearch:
+    image: getmeili/meilisearch:v1.53.0
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: ${MEILISEARCH_API_KEY:?set MEILISEARCH_API_KEY}
+      MEILI_ENV: production
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - medusa_meilisearch_data:/meili_data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:7700/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "7700:7700"
+
   backend-server:
     build:
       context: .
@@ -55,6 +72,8 @@ services:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      meilisearch:
         condition: service_healthy
     environment:
       NODE_ENV: production
@@ -69,6 +88,9 @@ services:
       STORE_CORS: ${STORE_CORS}
       ADMIN_CORS: ${ADMIN_CORS}
       AUTH_CORS: ${AUTH_CORS}
+      MEILISEARCH_HOST: http://meilisearch:7700
+      MEILISEARCH_API_KEY: ${MEILISEARCH_API_KEY:?set MEILISEARCH_API_KEY}
+      MEILISEARCH_PRODUCT_INDEX_NAME: ${MEILISEARCH_PRODUCT_INDEX_NAME:-products}
       MEDUSA_ADMIN_EMAIL: ${MEDUSA_ADMIN_EMAIL:-}
       MEDUSA_ADMIN_PASSWORD: ${MEDUSA_ADMIN_PASSWORD:-}
       MEDUSA_SEED: ${MEDUSA_SEED:-false}
@@ -87,6 +109,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      meilisearch:
+        condition: service_healthy
     environment:
       NODE_ENV: production
       PORT: "9000"
@@ -100,6 +124,9 @@ services:
       STORE_CORS: ${STORE_CORS}
       ADMIN_CORS: ${ADMIN_CORS}
       AUTH_CORS: ${AUTH_CORS}
+      MEILISEARCH_HOST: http://meilisearch:7700
+      MEILISEARCH_API_KEY: ${MEILISEARCH_API_KEY:?set MEILISEARCH_API_KEY}
+      MEILISEARCH_PRODUCT_INDEX_NAME: ${MEILISEARCH_PRODUCT_INDEX_NAME:-products}
       WORKER_START_DELAY: "20"
     # No ports and no domain: workers must never be publicly reachable.
 
@@ -125,3 +152,4 @@ services:
 volumes:
   medusa_postgres_data:
   medusa_redis_data:
+  medusa_meilisearch_data:

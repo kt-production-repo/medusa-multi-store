@@ -7,6 +7,7 @@ import {
 import { z } from "@medusajs/framework/zod"
 import { AdminCreateProduct } from "@medusajs/medusa/api/admin/products/validators"
 import { PostVendorCreateSchema } from "./vendors/route"
+import { PostStoreProductSearchSchema } from "./store/products/search/route"
 
 const AdminVendorsParams = z.object({
   limit: z.coerce.number().min(1).max(100).default(20),
@@ -43,6 +44,13 @@ export default defineMiddlewares({
       method: ["POST"],
       middlewares: [
         validateAndTransformBody(AdminCreateProduct),
+      ]
+    },
+    {
+      matcher: "/store/products/search",
+      method: ["POST"],
+      middlewares: [
+        validateAndTransformBody(PostStoreProductSearchSchema),
       ]
     },
     {
