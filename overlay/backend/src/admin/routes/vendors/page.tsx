@@ -10,7 +10,7 @@ import {
   createDataTableColumnHelper,
   DataTablePaginationState,
   DataTableRowSelectionState,
-  Spinner,
+  Skeleton,
 } from "@medusajs/ui"
 import { useQuery } from "@tanstack/react-query"
 import { sdk } from "../../lib/client"
@@ -132,7 +132,7 @@ export default function VendorsPage() {
   if (isLoading && !data) {
     return (
       <div className="flex items-center justify-center p-8">
-        <Spinner />
+        <Skeleton className="h-8 w-64" />
       </div>
     )
   }

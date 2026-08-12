@@ -18,7 +18,6 @@ const createVendorAdminStep = createStep(
     adminData: CreateVendorAdminStepInput, 
     { container }
   ) => {
-    console.log("adminData", adminData)
     const marketplaceModuleService: MarketplaceModuleService = 
       container.resolve(MARKETPLACE_MODULE)
 

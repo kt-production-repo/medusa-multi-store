@@ -30,7 +30,7 @@ const deleteVendorAdminStep = createStep(
 
     const { vendor: _, ...vendorAdminData } = vendorAdmin
 
-    marketplaceModuleService.createVendorAdmins(vendorAdminData)
+    await marketplaceModuleService.createVendorAdmins(vendorAdminData)
   }
 )
 

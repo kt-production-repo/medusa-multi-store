@@ -50,7 +50,7 @@ export default defineMiddlewares({
       method: ["GET"],
       middlewares: [
         validateAndTransformQuery(AdminVendorsParams, {
-          isAdmin: true,
+          isList: true,
         }),
       ],
     },
@@ -59,7 +59,7 @@ export default defineMiddlewares({
       method: ["GET"],
       middlewares: [
         validateAndTransformQuery(AdminVendorAdminsParams, {
-          isAdmin: true,
+          isList: true,
         }),
       ],
     },

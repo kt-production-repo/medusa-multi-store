@@ -1,18 +1,16 @@
-import { useMemo, useState } from "react"
-import { useNavigate, useSearchParams, Link } from "react-router-dom"
+import { useNavigate, useSearchParams, Link, useParams } from "react-router-dom"
 import {
   Heading,
   Text,
   Button,
   Container,
   Tabs,
-  Spinner,
-  Trash,
+  Skeleton,
 } from "@medusajs/ui"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { sdk } from "../../../lib/client"
 import type { Vendor } from "../../../types"
-import { ArrowLeft } from "@medusajs/icons"
+import { ArrowLeft, Trash } from "@medusajs/icons"
 
 interface VendorDetailResponse {
   vendor: Vendor
@@ -21,7 +19,6 @@ interface VendorDetailResponse {
 export default function VendorDetailPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const vendorId = useSearchParams()[0].get?.("id")
   const { id } = useParams()
   const queryClient = useQueryClient()
 
@@ -48,7 +45,7 @@ export default function VendorDetailPage() {
   if (isLoading || !data) {
     return (
       <div className="flex items-center justify-center p-8">
-        <Spinner />
+        <Skeleton className="h-8 w-64" />
       </div>
     )
   }
@@ -223,9 +220,4 @@ export default function VendorDetailPage() {
       </Tabs>
     </div>
   )
-}
-
-function useParams(): { id?: string } {
-  const match = useSearchParams()
-  return { id: undefined }
 }
