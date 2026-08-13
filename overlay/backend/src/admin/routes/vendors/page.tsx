@@ -13,8 +13,15 @@ import {
   Skeleton,
 } from "@medusajs/ui"
 import { useQuery } from "@tanstack/react-query"
+import { defineRouteConfig } from "@medusajs/admin-sdk"
+import { BuildingStorefront } from "@medusajs/icons"
 import { sdk } from "../../lib/client"
 import type { Vendor } from "../../types"
+
+export const config = defineRouteConfig({
+  label: "Vendors",
+  icon: BuildingStorefront,
+})
 
 const columnHelper = createDataTableColumnHelper<Vendor>()
 
