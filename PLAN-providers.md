@@ -65,7 +65,12 @@ Per AGENTS.md: `apps/**` is READ ONLY. All work is additive under `overlay/`,
 - [x] Config parses + transpiles (esbuild), braces balanced
 - [x] Provider packages pinned in `apps/backend/yarn.lock`
 - [x] `docker-compose.yml` passes yaml lint
-- [ ] Docker boot smoke test — **deferred**: Docker daemon was down. Run
-  `docker compose up --build` later; verify `GET /admin/payments/providers`
-  lists `stripe` and the storefront offers the Stripe card option once the
-  region enables the provider.
+- [x] Docker boot smoke test — ran `docker compose build backend-server` +
+  `docker compose up -d postgres redis meilisearch backend-server`. Backend
+  served `/health` + admin index on `:9000`; the compiled admin bundle
+  contains the Vendors sidebar route. A throwaway container booted with a
+  dummy `STRIPE_API_KEY` loaded `payment-stripe` and consumed its options
+  (log warned about the missing `webhookSecret`, proving registration).
+  `/admin/payments/providers` returns `{}` until a region enables a
+  provider (Admin → Settings → Regions), and the storefront will offer the
+  Stripe card option once that region does.
