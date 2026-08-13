@@ -1,10 +1,14 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "@medusajs/framework/zod"
 import { MEILISEARCH_MODULE } from "../../../../modules/meilisearch"
-import MeilisearchModuleService from "../../../../modules/meilisearch/service"
+import MeilisearchModuleService, {
+  MeilisearchSearchOptions,
+} from "../../../../modules/meilisearch/service"
 
 export const PostStoreProductSearchSchema = z.object({
   q: z.string().trim().min(1),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+  offset: z.coerce.number().int().min(0).optional(),
 })
 
 export type PostStoreProductSearchBody = z.infer<
@@ -19,8 +23,19 @@ export const POST = async (
     MEILISEARCH_MODULE
   )
 
-  const { q } = req.validatedBody
-  const hits = await meilisearchModuleService.search(q)
+  const { q, limit, offset } = req.validatedBody
 
-  res.json({ hits })
+  const searchOptions: MeilisearchSearchOptions = {
+    ...(limit !== undefined ? { limit } : {}),
+    ...(offset !== undefined ? { offset } : {}),
+  }
+
+  const result = await meilisearchModuleService.search(q, "product", searchOptions)
+
+  res.json({
+    hits: result.hits,
+    estimatedTotalHits: result.estimatedTotalHits,
+    query: result.query,
+    processingTimeMs: result.processingTimeMs,
+  })
 }
