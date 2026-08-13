@@ -5,7 +5,7 @@ description: Use when working on this Medusa 2 multi-vendor marketplace repo —
 
 # Medusa 2 Multi-Vendor Marketplace (Dokploy)
 
-Deployment repo for a multi-vendor Medusa 2 store running on Dokploy as five
+Deployment repo for a multi-vendor Medusa 2 store running on Dokploy as six
 separate container services.
 
 ## Repository layout
@@ -21,7 +21,9 @@ medusa/
 ├── deploy/
 │   ├── backend/Dockerfile         #   one image, two services
 │   ├── backend/entrypoint.sh      #   migrate-then-start / worker-wait
+│   ├── meilisearch/Dockerfile     #   standalone Meilisearch search engine
 │   └── storefront/Dockerfile
+├── overlay/storefront/            # our storefront code (additive paths only)
 ├── env/                           # .env.example per Dokploy service
 ├── scripts/                       # bootstrap / update-upstream / check-overlay
 ├── .opencode/skills/              # agent skills (this file)
@@ -72,16 +74,31 @@ Put the file under `overlay/backend/src/` on a path that does NOT exist in
 ./scripts/check-overlay.sh   # exits non-zero if an overlay file shadows upstream
 ```
 
-Existing overlay paths (the official marketplace recipe):
+Existing overlay paths (the official marketplace recipe + meilisearch):
 
 ```
 overlay/backend/src/
-├── api/vendors/…                 /vendors, /vendors/products, /vendors/orders
-├── api/store/carts/[id]/complete-vendor/route.ts
+├── api/vendors/…                 /vendors, /vendors/products, /vendors/orders,
+│                                /vendors/admins/:id
+├── api/admin/…                   /admin/vendors, /admin/vendors/admins,
+│                                /admin/products/:id/vendor,
+│                                /admin/orders/:id/vendor,
+│                                /admin/meilisearch/sync
+├── api/store/…                   /store/carts/[id]/complete-vendor,
+│                                /store/products/search
 ├── api/middlewares.ts            vendor actor-type auth + validation
 ├── links/                        vendor↔product, vendor↔order
 ├── modules/marketplace/          Vendor + VendorAdmin models, migrations
-└── workflows/marketplace/        create-vendor, split-order, …
+├── modules/meilisearch/          self-hosted Meilisearch search module
+├── subscribers/                  product sync/delete → Meilisearch
+├── workflows/marketplace/        create-vendor, create-admin-vendor,
+│                                add-vendor-admin, update-vendor,
+│                                delete-vendor-admin, create-vendor-product,
+│                                create-vendor-orders (split-order)
+├── workflows/meilisearch/        reindex / delete-index-documents
+└── admin/                        Admin UI: vendors pages, widgets,
+                                 vendor-admins, settings/meilisearch
+overlay/storefront/src/           /search page + search bar/results (Meilisearch)
 ```
 
 Vendor admins are a **custom actor type** (`"vendor"`), authenticated via
@@ -230,19 +247,21 @@ Two failures already seen, both from this table:
 
 ## Dokploy topology
 
-Five separate services, one project:
+Six separate services, one project:
 
 | Service | Type | Dockerfile | Port | Domain |
 |---|---|---|---|---|
 | `medusa-postgres` | Database | — | 5432 | none |
 | `medusa-redis` | Database | — | 6379 | none |
+| `medusa-meilisearch` | Application | `deploy/meilisearch/Dockerfile` | 7700 | none |
 | `medusa-backend-server` | Application | `deploy/backend/Dockerfile` | 9000 | api.* |
 | `medusa-backend-worker` | Application | same, `DISABLE_MEDUSA_ADMIN=true` | — | **none** |
 | `medusa-storefront` | Application | `deploy/storefront/Dockerfile` | 8000 | shop.* |
 
-Deploy order: **databases → backend-server → backend-worker → storefront.**
-The storefront build calls the live backend via `generateStaticParams`, so it
-needs a valid publishable key and at least one region to already exist.
+Deploy order: **databases → meilisearch → backend-server → backend-worker →
+storefront.** The storefront build calls the live backend via
+`generateStaticParams`, so it needs a valid publishable key and at least one
+region to already exist.
 
 Server vs worker is a Medusa production requirement: the server answers API
 requests and serves the Admin; the worker runs scheduled jobs, subscribers and
@@ -270,15 +289,36 @@ Internal traffic is plain `http` — TLS terminates at Traefik.
 Added by the overlay. Vendor admins are a custom actor type, so they use
 `/auth/vendor/*`, not the admin or customer auth routes.
 
+Vendor-authenticated (`/vendors*`):
+
 | Method | Route | Purpose |
 |---|---|---|
-| `POST` | `/auth/vendor/emailpass/register` | Registration token (unregistered) |
-| `POST` | `/auth/vendor/emailpass` | Authenticated token |
 | `POST` | `/vendors` | Create vendor + first admin |
 | `GET` `POST` | `/vendors/products` | List / create that vendor's products |
 | `GET` | `/vendors/orders` | That vendor's split orders |
-| `DELETE` | `/vendors/admins/:id` | Remove a vendor admin |
+| `DELETE` | `/vendors/admins/:id` | Remove one of that vendor's admins |
+
+Admin-authenticated (`/admin*`):
+
+| Method | Route | Purpose |
+|---|---|---|
+| `GET` `POST` | `/admin/vendors` | List / create vendors (admin-scoped) |
+| `POST` | `/admin/vendors/:id` | Update a vendor |
+| `GET` `POST` | `/admin/vendors/admins` | List / add vendor admins |
+| `DELETE` | `/admin/vendors/admins/:id` | Remove a vendor admin |
+| `GET` | `/admin/products/:id/vendor` | Vendor linked to a product |
+| `GET` | `/admin/orders/:id/vendor` | Vendor linked to an order |
+| `POST` | `/admin/meilisearch/sync` | Full Meilisearch reindex |
+
+Store (publishable key):
+
+| Method | Route | Purpose |
+|---|---|---|
+| `POST` | `/store/products/search` | Meilisearch product search |
 | `POST` | `/store/carts/:id/complete-vendor` | Checkout, splitting per vendor |
+
+Vendor auth (`/auth/vendor/emailpass*`) is the custom actor type's auth; the
+full route list also lives in `README.md`.
 
 Three-step vendor onboarding:
 

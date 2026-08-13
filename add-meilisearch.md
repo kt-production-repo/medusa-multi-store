@@ -49,8 +49,8 @@ under `apps/` stay read-only. All changes stay on overlay/deploy/env paths so
 - [x] 18. Add `meilisearch` service to docker-compose.yml (getmeili/meilisearch,
       port 7700, volume, healthcheck) + wire env into backend-server/worker.
 - [x] 19. Document 6th Dokploy service `medusa-meilisearch` (getmeili/meilisearch,
-      :7700, no public domain) + deploy order: databases → backend-server →
-      backend-worker → storefront.
+      :7700, no public domain) + deploy order: databases → meilisearch →
+      backend-server → backend-worker → storefront.
 
 ## Verify
 

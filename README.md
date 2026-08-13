@@ -26,7 +26,7 @@ medusa/
 │       ├── modules/marketplace/   #     Vendor + VendorAdmin models, migrations
 │       ├── modules/meilisearch/   #     self-hosted Meilisearch search module
 │       ├── subscribers/           #     product sync/delete -> Meilisearch
-│       ├── workflows/marketplace/ #     create-vendor, split-order, ...
+│       ├── workflows/marketplace/ #     create-vendor, create-vendor-orders, ...
 │       └── workflows/meilisearch/ #     reindex / delete-index-documents
 │
 ├── overlay/storefront/            # our storefront code (additive paths only)

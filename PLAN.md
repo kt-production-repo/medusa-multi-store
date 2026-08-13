@@ -133,7 +133,7 @@ All completed in the smoke run:
 - [x] Stack torn down (`docker compose down -v`).
 - [x] `git status --porcelain apps/` empty.
 - [x] `./scripts/check-overlay.sh` passes.
-- [ ] Commit only overlay + deploy + env + compose changes.
+- [x] Commit only overlay + deploy + env + compose changes.
 - [ ] Push to GitHub only after the user explicitly confirms.
 
 ## Smoke-test notes for next time

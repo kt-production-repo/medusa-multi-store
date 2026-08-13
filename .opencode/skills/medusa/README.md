@@ -73,7 +73,7 @@ Vendored from [medusajs/medusa-agent-skills](https://github.com/medusajs/medusa-
 | `mcloud-projects` | Projects |
 | `mcloud-variables` | Environment variables |
 
-The nine `mcloud-*` skills target **Medusa Cloud**, which this project does
+The eight `mcloud-*` skills target **Medusa Cloud**, which this project does
 not use — it self-hosts on Dokploy. They are included for completeness; ignore
 them unless you also run a Cloud project.
 

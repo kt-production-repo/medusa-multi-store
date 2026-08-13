@@ -47,7 +47,7 @@ project already.
 
 ## Deployment order
 
-Databases → backend-server → backend-worker → storefront.
+Databases → meilisearch → backend-server → backend-worker → storefront.
 
 The storefront build calls the live backend via `generateStaticParams`, so it
 needs a real publishable key and at least one region to exist first.
