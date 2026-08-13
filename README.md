@@ -122,10 +122,14 @@ exposed to the internet.
   lives here; it survives redeploys).
 - **Domains**: **none** — never expose the search engine publicly.
 
-After it's up, open **Application → General → App Name** and copy the generated
-internal hostname (e.g. `http://medusa-meilisearch-<suffix>:7700`) into
-`MEILISEARCH_HOST` on **both** backend services, and set `MEILISEARCH_API_KEY` to
-the same `MEILI_MASTER_KEY`.
+After it's up, note the application's **App Name** — the Docker Swarm service
+name that other services use to reach it on the shared network. It is shown as
+the small muted line under the app's display name at the top of the
+application page (the same name you set in the "Add Application" dialog, which
+auto-prefixes it with the project slug, e.g. `medusa-multi-store-medusameilisearch`).
+Put it into `MEILISEARCH_HOST` on **both** backend services as
+`http://<app-name>:7700`, and set `MEILISEARCH_API_KEY` to the same
+`MEILI_MASTER_KEY`.
 
 > Note: Meilisearch is **not** a native Dokploy Database (only Postgres, MySQL,
 > MariaDB, MongoDB, Redis/libsql are). The older "Database → Meilisearch" menu
@@ -187,18 +191,22 @@ too late.
 ## 4. Networking
 
 Dokploy Applications and Databases in the same project resolve each other by
-**service name** on the shared Docker network:
+their **Docker Swarm service name** on the shared network. For an Application
+that name is its **App Name** (shown in the app page header, set at creation as
+`<project-slug>-<service-name>`); for a Database it is shown on the database
+page as the **Internal Connection URL** host. Example, with the project slug
+`medusa-multi-store`:
 
 ```
-DATABASE_URL=postgres://medusa:pass@medusa-postgres:5432/medusa
-REDIS_URL=redis://default:pass@medusa-redis:6379
-MEILISEARCH_HOST=http://medusa-meilisearch:7700
+DATABASE_URL=postgres://medusa:pass@<db-app-name>:5432/medusa
+REDIS_URL=redis://default:pass@<redis-app-name>:6379
+MEILISEARCH_HOST=http://medusa-multi-store-medusameilisearch:7700
 ```
 
 Never use `localhost` or a host IP — each service is its own container.
 
 If a name fails to resolve on a Swarm host without IPVS kernel modules, use the
-`tasks.` prefix (`tasks.medusa-postgres:5432`) per Dokploy's networking
+`tasks.` prefix (`tasks.<db-app-name>:5432`) per Dokploy's networking
 troubleshooting guide.
 
 Optionally point the storefront's *server-side* fetches at

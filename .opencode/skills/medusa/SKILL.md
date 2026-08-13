@@ -251,15 +251,18 @@ workflows. Only the server runs migrations — the worker sleeps
 
 ### Networking
 
-Services resolve each other by Dokploy's **generated** service name, which
-carries a random suffix:
+Services resolve each other by their Docker Swarm service name on the shared
+network. For an Application that name is its **App Name** — set at creation in
+the "Add Application" dialog as `<project-slug>-<service-name>` and shown as the
+small muted line under the display name at the top of the app page (it is NOT a
+field in the General tab). For a Database it is the host of the **Internal
+Connection URL** on the database page.
 
 ```
-http://medusa-multi-store-medusabackendserver-jsdllf:9000
+http://medusa-multi-store-medusameilisearch:7700
 ```
 
-Copy the real value from the Dokploy UI (Application → General → App Name, or
-Database → Internal Connection URL). Never `localhost`, never a host IP.
+Copy the real value from the UI as above. Never `localhost`, never a host IP.
 Internal traffic is plain `http` — TLS terminates at Traefik.
 
 ## Vendor API surface
