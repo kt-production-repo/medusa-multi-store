@@ -34,7 +34,7 @@ README claims. Fixes limited to repo-owned files (`overlay/backend/**`, `env/`,
           health 200; smoke-tested query paths (order, order_fulfillment link)
           + createNotifications reached SendGrid (401 with fake key proves
           wiring). Entrypoint guard fails fast without secrets.
-- [ ] 12. Mark plan complete; commit + push GitHub (SSH) + Gitea (token) on
+- [x] 12. Mark plan complete; commit + push GitHub (SSH) + Gitea (token) on
           `add-meilisearch`
 
 ## Findings
