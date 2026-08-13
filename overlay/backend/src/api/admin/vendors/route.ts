@@ -3,20 +3,16 @@ import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { z } from "@medusajs/framework/zod"
 import createAdminVendorWorkflow from "../../../workflows/marketplace/create-admin-vendor"
 
-export const AdminCreateVendorSchema = z
-  .object({
-    name: z.string(),
-    handle: z.string().optional(),
-    logo: z.string().optional(),
-    admin: z
-      .object({
-        email: z.string(),
-        first_name: z.string().optional(),
-        last_name: z.string().optional(),
-      })
-      .strict(),
-  })
-  .strict()
+export const AdminCreateVendorSchema = z.strictObject({
+  name: z.string(),
+  handle: z.string().optional(),
+  logo: z.string().optional(),
+  admin: z.strictObject({
+    email: z.email(),
+    first_name: z.string().optional(),
+    last_name: z.string().optional(),
+  }),
+})
 
 export type AdminCreateVendorBody = z.infer<typeof AdminCreateVendorSchema>
 export const GET = async (

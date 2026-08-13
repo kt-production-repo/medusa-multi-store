@@ -8,16 +8,16 @@ import createVendorWorkflow, {
   CreateVendorWorkflowInput
 } from "../../workflows/marketplace/create-vendor";
 
-export const PostVendorCreateSchema = z.object({
+export const PostVendorCreateSchema = z.strictObject({
   name: z.string(),
   handle: z.string().optional(),
   logo: z.string().optional(),
-  admin: z.object({
-    email: z.string(),
+  admin: z.strictObject({
+    email: z.email(),
     first_name: z.string().optional(),
     last_name: z.string().optional()
-  }).strict()
-}).strict()
+  })
+})
 
 type RequestBody = z.infer<typeof PostVendorCreateSchema>
 

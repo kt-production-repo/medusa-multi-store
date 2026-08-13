@@ -3,14 +3,12 @@ import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { z } from "@medusajs/framework/zod"
 import addVendorAdminWorkflow from "../../../../workflows/marketplace/add-vendor-admin"
 
-export const AdminAddVendorAdminSchema = z
-  .object({
-    vendor_id: z.string(),
-    email: z.string(),
-    first_name: z.string().optional(),
-    last_name: z.string().optional(),
-  })
-  .strict()
+export const AdminAddVendorAdminSchema = z.strictObject({
+  vendor_id: z.string(),
+  email: z.email(),
+  first_name: z.string().optional(),
+  last_name: z.string().optional(),
+})
 
 export type AdminAddVendorAdminBody = z.infer<typeof AdminAddVendorAdminSchema>
 

@@ -1,16 +1,13 @@
 import { AuthenticatedMedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys, MedusaError } from "@medusajs/framework/utils"
 import { z } from "@medusajs/framework/zod"
-import { MARKETPLACE_MODULE } from "../../../../modules/marketplace"
-import MarketplaceModuleService from "../../../../modules/marketplace/service"
+import updateVendorWorkflow from "../../../../workflows/marketplace/update-vendor"
 
-export const AdminUpdateVendorSchema = z
-  .object({
-    name: z.string().optional(),
-    handle: z.string().optional(),
-    logo: z.string().nullable().optional(),
-  })
-  .strict()
+export const AdminUpdateVendorSchema = z.strictObject({
+  name: z.string().optional(),
+  handle: z.string().optional(),
+  logo: z.string().nullable().optional(),
+})
 
 export type AdminUpdateVendorBody = z.infer<typeof AdminUpdateVendorSchema>
 
@@ -57,25 +54,14 @@ export const POST = async (
   req: AuthenticatedMedusaRequest<AdminUpdateVendorBody>,
   res: MedusaResponse
 ) => {
-  const marketplaceService: MarketplaceModuleService = req.scope.resolve(
-    MARKETPLACE_MODULE
-  )
-
-  const vendor = await marketplaceService
-    .updateVendors({
+  const { result } = await updateVendorWorkflow(req.scope).run({
+    input: {
       id: req.params.id,
       ...req.validatedBody,
-    })
-    .catch(() => null)
-
-  if (!vendor) {
-    throw new MedusaError(
-      MedusaError.Types.NOT_FOUND,
-      `Vendor with id ${req.params.id} not found`
-    )
-  }
+    },
+  })
 
   res.json({
-    vendor,
+    vendor: result.vendor,
   })
 }
