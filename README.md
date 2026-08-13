@@ -18,12 +18,16 @@ medusa/
 │   └── storefront/                #   medusajs/nextjs-starter-medusa   @ main
 │
 ├── overlay/backend/               # our code, layered in at BUILD time only
-│   ├── medusa-config.ts           #   prod config + marketplace module
-│   └── src/                       #   multi-vendor recipe (additive paths only)
-│       ├── api/                   #     /vendors, /vendors/products, ...
+│   ├── medusa-config.ts           #   prod config + marketplace + meilisearch modules
+│   └── src/                       #   additive paths only (never exist upstream)
+│       ├── api/                   #     /vendors, /vendors/products, /admin/vendors, ...
+│       ├── admin/                 #     Admin UI: Vendors + Settings → Meilisearch pages
 │       ├── links/                 #     vendor <-> product, vendor <-> order
 │       ├── modules/marketplace/   #     Vendor + VendorAdmin models, migrations
-│       └── workflows/marketplace/ #     create-vendor, split-order, ...
+│       ├── modules/meilisearch/   #     self-hosted Meilisearch search module
+│       ├── subscribers/           #     product sync/delete -> Meilisearch
+│       ├── workflows/marketplace/ #     create-vendor, split-order, ...
+│       └── workflows/meilisearch/ #     reindex / delete-index-documents
 │
 ├── overlay/storefront/            # our storefront code (additive paths only)
 │   └── src/                       #   Meilisearch search UI, /search page
@@ -262,15 +266,28 @@ curl -X POST https://api.example.com/auth/vendor/emailpass \
 
 No trailing slash on these URLs — it bypasses the route middleware.
 
-Vendor endpoints added by the overlay:
+Vendor endpoints added by the overlay (authenticated as a vendor):
 
 | Method | Route | Purpose |
 |--------|-------|---------|
 | `POST` | `/vendors` | Create a vendor + first admin |
 | `GET`/`POST` | `/vendors/products` | List / create that vendor's products |
 | `GET` | `/vendors/orders` | That vendor's split orders |
-| `GET`/`POST` | `/vendors/admins/:id` | Manage vendor admins |
+| `DELETE` | `/vendors/admins/:id` | Remove one of that vendor's admins |
 | `POST` | `/store/carts/:id/complete-vendor` | Checkout, splitting one cart into per-vendor orders |
+
+Admin-scoped routes (used by the Admin UI pages under `overlay/backend/src/admin/`):
+
+| Method | Route | Purpose |
+|--------|-------|---------|
+| `GET` | `/admin/vendors` | List vendors (`q`, `limit`, `offset`) |
+| `GET` | `/admin/vendors/:id` | Vendor detail incl. admins, products, orders |
+| `GET` | `/admin/vendors/admins` | List vendor admins across all vendors |
+| `DELETE` | `/admin/vendors/admins/:id` | Delete a vendor admin from the Admin |
+
+The Admin UI adds a **Vendors** page (`/vendors` and `/vendors/:id`, with
+Overview / Admins / Products / Orders tabs) and a **Settings → Meilisearch**
+page with a "Sync Data to Meilisearch" button.
 
 Meilisearch endpoints added by the overlay:
 
