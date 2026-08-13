@@ -235,7 +235,56 @@ logs anyone in — storefront customers, admin users, **and vendor admins**.
 
 ---
 
-## 6. Verifying
+## 6. Production providers
+
+The 17 commerce modules on [medusajs.com/modules](https://medusajs.com/modules)
+are core modules bundled inside `@medusajs/medusa` and load by default — no
+config needed. This repo adds three **providers** on top, each registered in
+`overlay/backend/medusa-config.ts` **only when its environment keys are set**
+(leave them blank to keep Medusa's default: manual payment, local file storage,
+no email):
+
+| Provider | Default without keys | Enables |
+|----------|----------------------|---------|
+| Stripe payments | manual `pp_system_default` checkout | real card payments in the storefront |
+| S3-compatible files | local (ephemeral) storage | images that survive redeploys |
+| SendGrid email | local feed only | order/fulfillment emails |
+
+### Stripe payments
+
+On **both** backend services set `STRIPE_API_KEY` (Stripe **secret** key,
+`sk_...`) and, for production, `STRIPE_WEBHOOK_SECRET` (`whsec_...`). Then in
+Stripe create a webhook pointing at:
+
+```
+https://api.example.com/hooks/payment/stripe_stripe
+```
+
+and enable the payment provider in Medusa Admin → Settings → Regions (edit the
+region → Payment Providers → Stripe). On the storefront, `NEXT_PUBLIC_STRIPE_KEY`
+must be the Stripe **publishable** key (`pk_...`) — it is already a build
+argument in `deploy/storefront/Dockerfile`.
+
+### S3-compatible file storage
+
+Set `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_REGION` and
+optionally `S3_FILE_URL` + `S3_ENDPOINT` on **both** backend services. Works
+with AWS S3, MinIO, Cloudflare R2 and DigitalOcean Spaces (the config sets
+`forcePathStyle` so non-AWS endpoints resolve correctly). Replaces `file-local`,
+so product images uploaded via the Admin now survive redeploys.
+
+### SendGrid email
+
+Set `SENDGRID_API_KEY` and `SENDGRID_FROM` (a verified SendGrid sender) on
+**both** backend services. The default local (feed) provider is kept alongside
+it; SendGrid owns the `email` channel.
+
+All provider packages ship inside the backend image already — no dependency
+changes needed.
+
+---
+
+## 7. Verifying
 
 | Check | URL |
 |-------|-----|
@@ -304,7 +353,7 @@ the overlay at `overlay/storefront/src/`.
 
 ---
 
-## 7. Keeping up with upstream
+## 8. Keeping up with upstream
 
 ```bash
 ./scripts/update-upstream.sh              # both
@@ -331,7 +380,7 @@ rebuild the storefront:
 
 ---
 
-## 8. Version notes
+## 9. Version notes
 
 `apps/backend` tracks Medusa **2.18.0**; the marketplace recipe was published
 against 2.14.0. The overlay was checked against 2.18 and is compatible:
@@ -349,7 +398,7 @@ the deprecated Cache module.
 
 ---
 
-## 9. Gotchas
+## 10. Gotchas
 
 - **Volumes**: use Docker named volumes, never absolute host paths or
   repo-relative bind mounts. Dokploy re-clones the repo on every deploy and
@@ -365,7 +414,7 @@ the deprecated Cache module.
 
 ---
 
-## 10. Sources
+## 11. Sources
 
 - Medusa docs — <https://docs.medusajs.com/>
   ([deployment](https://docs.medusajs.com/learn/deployment/general),

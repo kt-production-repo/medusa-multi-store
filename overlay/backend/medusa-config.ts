@@ -21,6 +21,95 @@ const REDIS_URL = process.env.REDIS_URL
 // only when pointing at an external managed database that requires it.
 const DATABASE_SSL = process.env.DATABASE_SSL === "true"
 
+// Production provider modules. Each is registered only when its env keys are
+// present: without keys the Medusa default (system payment / file-local /
+// local notification) stays active, so the key-less local compose stack boots.
+const stripeApiKey = process.env.STRIPE_API_KEY
+const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+const s3Configured =
+  !!process.env.S3_BUCKET &&
+  !!process.env.S3_ACCESS_KEY_ID &&
+  !!process.env.S3_SECRET_ACCESS_KEY
+const sendgridApiKey = process.env.SENDGRID_API_KEY
+
+const providerModules = [
+  ...(stripeApiKey
+    ? [
+        {
+          resolve: "@medusajs/medusa/payment",
+          options: {
+            providers: [
+              {
+                resolve: "@medusajs/medusa/payment-stripe",
+                id: "stripe",
+                options: {
+                  apiKey: stripeApiKey,
+                  ...(stripeWebhookSecret ? { webhookSecret: stripeWebhookSecret } : {}),
+                },
+              },
+            ],
+          },
+        },
+      ]
+    : []),
+  ...(s3Configured
+    ? [
+        {
+          resolve: "@medusajs/medusa/file",
+          options: {
+            providers: [
+              {
+                resolve: "@medusajs/medusa/file-s3",
+                id: "s3",
+                options: {
+                  file_url: process.env.S3_FILE_URL,
+                  access_key_id: process.env.S3_ACCESS_KEY_ID,
+                  secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
+                  region: process.env.S3_REGION,
+                  bucket: process.env.S3_BUCKET,
+                  ...(process.env.S3_ENDPOINT
+                    ? { endpoint: process.env.S3_ENDPOINT }
+                    : {}),
+                  additional_client_config: {
+                    forcePathStyle: true,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      ]
+    : []),
+  ...(sendgridApiKey
+    ? [
+        {
+          resolve: "@medusajs/medusa/notification",
+          options: {
+            providers: [
+              {
+                resolve: "@medusajs/medusa/notification-local",
+                id: "local",
+                options: {
+                  name: "Local Notification Provider",
+                  channels: ["feed"],
+                },
+              },
+              {
+                resolve: "@medusajs/medusa/notification-sendgrid",
+                id: "sendgrid",
+                options: {
+                  channels: ["email"],
+                  api_key: sendgridApiKey,
+                  from: process.env.SENDGRID_FROM,
+                },
+              },
+            ],
+          },
+        },
+      ]
+    : []),
+]
+
 const redisModules = REDIS_URL
   ? [
       {
@@ -94,6 +183,7 @@ module.exports = defineConfig({
     backendUrl: process.env.MEDUSA_BACKEND_URL,
   },
   modules: [
+    ...providerModules,
     ...redisModules,
     // Multi-vendor marketplace (official Medusa examples/marketplace recipe)
     {
