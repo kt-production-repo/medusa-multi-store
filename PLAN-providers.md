@@ -44,7 +44,8 @@ Per AGENTS.md: `apps/**` is READ ONLY. All work is additive under `overlay/`,
 - [x] 6. Verify: `./scripts/check-overlay.sh` passes; backend compiles; local
          compose boots with test keys; `GET /admin/payments/providers` lists
          `stripe`
-- [ ] 7. Commit + push to GitHub (SSH) and Gitea (token) on `add-meilisearch`
+- [x] 7. Commit + push to GitHub (SSH) and Gitea (token) on `add-meilisearch`
+         (`8cc096a`)
 
 ## Notes
 
