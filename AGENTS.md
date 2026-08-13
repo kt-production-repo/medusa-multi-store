@@ -63,7 +63,7 @@ Dokploy topology and vendor API. The other 18 are the official
 vendored so every contributor gets identical guidance with no install step.
 
 Treat the official skills as read-only; re-sync rather than edit. See
-`.opencode/skills/medusa/README.md`.
+`.opencode/skills/README.md`.
 
 ## Conventions
 

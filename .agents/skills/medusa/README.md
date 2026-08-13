@@ -1,28 +1,13 @@
 # Agent skills
 
-19 skills, all nested under a single `medusa/` folder and mirrored identically
-to three locations so any agent tool picks them up:
+19 skills, mirrored identically to three locations so any agent tool picks
+them up:
 
 ```
-.opencode/skills/medusa/    opencode native (registered via opencode.json)
-.claude/skills/medusa/      Claude Code
-.agents/skills/medusa/      generic agents
+.opencode/skills/   opencode native (registered via opencode.json)
+.claude/skills/     Claude Code
+.agents/skills/     generic agents
 ```
-
-Layout inside each:
-
-```
-medusa/
-├── SKILL.md                            # the project skill (this repo)
-├── README.md                           # this file
-├── building-with-medusa/SKILL.md       # official skills, one folder each
-├── storefront-best-practices/SKILL.md
-└── …
-```
-
-Skill loaders glob `**/SKILL.md` recursively, so nesting is transparent. The
-only hard requirement is that each skill's **immediate parent folder matches
-its frontmatter `name`** — which holds for all 19.
 
 ## Project skill
 
@@ -82,17 +67,16 @@ them unless you also run a Cloud project.
 ```bash
 git clone --depth=1 https://github.com/medusajs/medusa-agent-skills.git /tmp/mas
 for p in medusa-dev ecommerce-storefront learn-medusa medusa-cloud; do
-  cp -r /tmp/mas/plugins/$p/skills/*/ .opencode/skills/medusa/
+  cp -r /tmp/mas/plugins/$p/skills/*/ .opencode/skills/
 done
 
-# upstream ships this folder misnamed; loaders require folder == name
-mv .opencode/skills/medusa/creating-internal-agents \
-   .opencode/skills/medusa/creating-agents-in-medusa 2>/dev/null || true
+# upstream ships this folder misnamed; opencode requires folder == name
+mv .opencode/skills/creating-internal-agents \
+   .opencode/skills/creating-agents-in-medusa 2>/dev/null || true
 
 rm -rf .claude/skills .agents/skills
 cp -r .opencode/skills .claude/skills
 cp -r .opencode/skills .agents/skills
 ```
 
-Do not overwrite `medusa/SKILL.md` or `medusa/README.md` — those are ours, not
-upstream's.
+Keep `.opencode/skills/medusa/` — it is ours, not upstream's.

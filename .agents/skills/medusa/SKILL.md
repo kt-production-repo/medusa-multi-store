@@ -392,4 +392,4 @@ depth beyond this repo's specifics:
 | Admin users | `new-user` |
 
 The `mcloud-*` skills cover Medusa Cloud and do not apply here — this project
-self-hosts on Dokploy. See `.opencode/skills/medusa/README.md`.
+self-hosts on Dokploy. See `.opencode/skills/README.md`.

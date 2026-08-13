@@ -82,17 +82,16 @@ them unless you also run a Cloud project.
 ```bash
 git clone --depth=1 https://github.com/medusajs/medusa-agent-skills.git /tmp/mas
 for p in medusa-dev ecommerce-storefront learn-medusa medusa-cloud; do
-  cp -r /tmp/mas/plugins/$p/skills/*/ .opencode/skills/medusa/
+  cp -r /tmp/mas/plugins/$p/skills/*/ .opencode/skills/
 done
 
-# upstream ships this folder misnamed; loaders require folder == name
-mv .opencode/skills/medusa/creating-internal-agents \
-   .opencode/skills/medusa/creating-agents-in-medusa 2>/dev/null || true
+# upstream ships this folder misnamed; opencode requires folder == name
+mv .opencode/skills/creating-internal-agents \
+   .opencode/skills/creating-agents-in-medusa 2>/dev/null || true
 
 rm -rf .claude/skills .agents/skills
 cp -r .opencode/skills .claude/skills
 cp -r .opencode/skills .agents/skills
 ```
 
-Do not overwrite `medusa/SKILL.md` or `medusa/README.md` — those are ours, not
-upstream's.
+Keep `.opencode/skills/medusa/` — it is ours, not upstream's.
