@@ -21,16 +21,20 @@ check() {
   while IFS= read -r f; do
     rel="${f#"$overlay_dir"/}"
     if [ -e "$upstream_dir/$rel" ]; then
-      echo "COLLISION  overlay/$rel would overwrite upstream $upstream_dir/$rel"
+      echo "COLLISION  $overlay_dir/$rel would overwrite upstream $upstream_dir/$rel"
       fail=1
     else
-      echo "ok         $rel"
+      echo "ok         $overlay_dir/$rel"
     fi
   done < <(find "$overlay_dir" -type f | sort)
 }
 
 echo "== backend src overlay =="
 check overlay/backend/src apps/backend/src
+
+echo
+echo "== storefront src overlay (additive only) =="
+check overlay/storefront/src apps/storefront/src
 
 echo
 echo "== intentional replacements (these MUST collide) =="

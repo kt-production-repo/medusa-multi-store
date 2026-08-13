@@ -28,6 +28,7 @@ RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY apps/storefront/ ./
+COPY overlay/storefront/src/ ./src/
 
 # check-env-variables.js hard-exits the build if the publishable key is
 # absent, and NEXT_PUBLIC_* values are inlined into the client bundle.

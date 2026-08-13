@@ -1,5 +1,4 @@
 import { MedusaError } from "@medusajs/framework/utils"
-import type { SearchParams } from "meilisearch"
 
 type MeilisearchOptions = {
   host: string
@@ -9,15 +8,20 @@ type MeilisearchOptions = {
 
 export type MeilisearchIndexType = "product"
 
-// Re-exported so the API layer can stay decoupled from the meilisearch package.
-export type MeilisearchSearchOptions = SearchParams
+type MeilisearchClient = Awaited<ReturnType<typeof createClient>>
+type MeilisearchIndex = Awaited<ReturnType<MeilisearchClient["index"]>>
+
+// The meilisearch package is ESM-only and Medusa compiles src/ to CommonJS,
+// so a static `import type` fails TS1541. The type is derived from the
+// lazily-loaded client instead; the API layer stays decoupled via this re-export.
+export type MeilisearchSearchOptions = NonNullable<
+  Parameters<MeilisearchIndex["search"]>[1]
+>
 
 type IndexedDocument = {
   id: string
   [key: string]: unknown
 }
-
-type MeilisearchClient = Awaited<ReturnType<typeof createClient>>
 
 async function createClient(host: string, apiKey: string) {
   const { Meilisearch } = await import("meilisearch")

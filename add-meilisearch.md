@@ -1,8 +1,8 @@
 # Add Meilisearch to the marketplace
 
-Goal: self-hosted Meilisearch, backend integration only (storefront search UI
-deferred — apps/storefront is read-only and needs a storefront overlay
-mechanism first). All changes stay on overlay/deploy/env paths so
+Goal: self-hosted Meilisearch with a live storefront search UI. The storefront
+work lives in an additive overlay (`overlay/storefront/src/`), so both repos
+under `apps/` stay read-only. All changes stay on overlay/deploy/env paths so
 `./scripts/update-upstream.sh` stays conflict-free.
 
 - [x] 1. Research Medusa v2 Meilisearch integration (official guide +
@@ -68,11 +68,14 @@ mechanism first). All changes stay on overlay/deploy/env paths so
       `MEILISEARCH_PRODUCT_INDEX_NAME`). Optional: add explicit
       `MEILI_DATA_DIR=/meili_data` to the meilisearch env (currently the image default).
 
-## Deferred
+## Storefront search UI
 
-- [ ] 22. Storefront search UI — requires a storefront overlay mechanism
-      (overlay/storefront/ + COPY in deploy/storefront/Dockerfile + check-overlay
-      extension). Out of scope here.
+- [x] 22. Storefront search UI (Option B — additive storefront overlay). See
+      `PLAN-meilisearch-storefront.md`. Added `overlay/storefront/src/` (search
+      data fn + search bar + results + `/{cc}/search` page), the `COPY
+      overlay/storefront/src/ ./src/` layer in `deploy/storefront/Dockerfile`,
+      and the additive `check-overlay.sh` storefront branch. Live at
+      `/{cc}/search?q=…`; hydrates priced products via `GET /store/products`.
 
 ---
 
@@ -91,6 +94,11 @@ mechanism first). All changes stay on overlay/deploy/env paths so
 - smoke-test validated: seed auto-indexed 4 products via `product.created`; manual
   sync `POST /admin/meilisearch/sync` → 200; `POST /store/products/search` →
   hits; create products → doc count 4→5; delete → 5→4 and search returns 0 hits.
+- Storefront build discovered a second ESM gotcha: `import type { SearchParams }
+  from "meilisearch"` also fails TS1541 because the package is ESM-only and
+  Medusa compiles `src/` to CommonJS. `service.ts` now derives
+  `MeilisearchSearchOptions` from the lazily-loaded client's `search` params
+  type instead of a static type-only import.
 
 - **Deployment finding**: the `meilisearch` npm package is *only the JS client*;
   the engine is the standalone `getmeili/meilisearch` server (needs a persistent

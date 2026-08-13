@@ -19,12 +19,12 @@
   - `overlay/storefront/src/modules/search/components/search-bar/index.tsx` (client): input + `MagnifyingGlass` icon (`@medusajs/icons`, exported), Enter → `router.replace(/{cc}/search?q=…)`.
   - `overlay/storefront/src/modules/search/components/search-results/index.tsx` (server): fetches + renders existing `ProductPreview` grid + `Pagination`, empty/skeleton states.
   - `overlay/storefront/src/app/[countryCode]/(main)/search/page.tsx`: page shell (SearchBar + Suspense'd SearchResults).
-- [ ] 4. `deploy/storefront/Dockerfile` builder: add `COPY overlay/storefront/src/ ./src/` after `COPY apps/storefront/ ./`.
-- [ ] 5. `scripts/check-overlay.sh`: add `check overlay/storefront/src apps/storefront/src` (additive only).
-- [ ] 6. `README.md`: add `overlay/storefront/**` to storefront Watch Paths; minor storefront-search note; fix §5 ("not wired up yet" → live).
-- [ ] 7. `add-meilisearch.md`: check off step 22.
-- [ ] 8. Guardrails: `./scripts/check-overlay.sh` exits 0; `git status --porcelain apps/` empty.
-- [ ] 9. Smoke test (docker compose, seeded): `/<cc>/search?q=…` renders results; Enter navigates/paginates; empty/gibberish → graceful empty state; meili down → no crash.
+- [x] 4. `deploy/storefront/Dockerfile` builder: add `COPY overlay/storefront/src/ ./src/` after `COPY apps/storefront/ ./`.
+- [x] 5. `scripts/check-overlay.sh`: add `check overlay/storefront/src apps/storefront/src` (additive only).
+- [x] 6. `README.md`: add `overlay/storefront/**` to storefront Watch Paths; minor storefront-search note; fix §5 ("not wired up yet" → live).
+- [x] 7. `add-meilisearch.md`: check off step 22.
+- [x] 8. Guardrails: `./scripts/check-overlay.sh` exits 0; `git status --porcelain apps/` empty.
+- [x] 9. Smoke test (docker compose, seeded): `docker compose up --build` with `MEDUSA_SEED=true`; `/{cc}/search?q=medusa` renders the product grid (200), gibberish → "No products found", no `q` → "Enter a search term", meili down → graceful 200 empty state. Also fixed a build break found during this test: the backend `meilisearch` client is ESM-only, so the type-only `import type { SearchParams }` failed TS1541 — the type is now derived from the lazily-loaded client instead.
 
 ## Files touched (all ours; none under `apps/`)
 

@@ -25,6 +25,9 @@ medusa/
 │       ├── modules/marketplace/   #     Vendor + VendorAdmin models, migrations
 │       └── workflows/marketplace/ #     create-vendor, split-order, ...
 │
+├── overlay/storefront/            # our storefront code (additive paths only)
+│   └── src/                       #   Meilisearch search UI, /search page
+│
 ├── deploy/
 │   ├── backend/Dockerfile         # one image, two services (server + worker)
 │   ├── backend/entrypoint.sh      # migrate-then-start / worker-wait logic
@@ -271,7 +274,8 @@ Meilisearch endpoints added by the overlay:
 Products are indexed automatically on `product.created` / `product.updated` /
 `product.deleted`. To (re)index everything, hit `POST /admin/meilisearch/sync`
 or use the **Settings → Meilisearch** page in the Admin. The storefront search
-UI is not wired up yet — the search API is ready for any client.
+UI is live at `https://shop.example.com/{countryCode}/search?q=…`, driven by
+the overlay at `overlay/storefront/src/`.
 
 ---
 
@@ -298,7 +302,7 @@ rebuild the storefront:
 | `medusa-backend-server` | `apps/backend/**`, `overlay/backend/**`, `deploy/backend/**` |
 | `medusa-backend-worker` | `apps/backend/**`, `overlay/backend/**`, `deploy/backend/**` |
 | `medusa-meilisearch` | `deploy/meilisearch/**` |
-| `medusa-storefront` | `apps/storefront/**`, `deploy/storefront/**` |
+| `medusa-storefront` | `apps/storefront/**`, `overlay/storefront/**`, `deploy/storefront/**` |
 
 ---
 
