@@ -1,5 +1,18 @@
 import { AuthenticatedMedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { z } from "@medusajs/framework/zod"
+import addVendorAdminWorkflow from "../../../../workflows/marketplace/add-vendor-admin"
+
+export const AdminAddVendorAdminSchema = z
+  .object({
+    vendor_id: z.string(),
+    email: z.string(),
+    first_name: z.string().optional(),
+    last_name: z.string().optional(),
+  })
+  .strict()
+
+export type AdminAddVendorAdminBody = z.infer<typeof AdminAddVendorAdminSchema>
 
 export const GET = async (
   req: AuthenticatedMedusaRequest,
@@ -38,5 +51,18 @@ export const GET = async (
   res.json({
     vendor_admins: data,
     count: metadata?.count || data.length,
+  })
+}
+
+export const POST = async (
+  req: AuthenticatedMedusaRequest<AdminAddVendorAdminBody>,
+  res: MedusaResponse
+) => {
+  const { result } = await addVendorAdminWorkflow(req.scope).run({
+    input: req.validatedBody,
+  })
+
+  res.json({
+    vendor_admin: result.vendor_admin,
   })
 }

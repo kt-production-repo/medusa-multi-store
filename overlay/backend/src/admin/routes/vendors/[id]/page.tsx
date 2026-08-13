@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useNavigate, useSearchParams, Link, useParams } from "react-router-dom"
 import {
   Heading,
@@ -6,14 +7,182 @@ import {
   Container,
   Tabs,
   Skeleton,
+  FocusModal,
+  Drawer,
+  Input,
+  Label,
+  toast,
 } from "@medusajs/ui"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { sdk } from "../../../lib/client"
 import type { Vendor } from "../../../types"
-import { ArrowLeft, Trash } from "@medusajs/icons"
+import { ArrowLeft, PencilSquare, Plus, Trash } from "@medusajs/icons"
 
 interface VendorDetailResponse {
   vendor: Vendor
+}
+
+interface AddAdminFormProps {
+  vendorId: string
+  onSuccess: () => void
+}
+
+function AddAdminForm({ vendorId, onSuccess }: AddAdminFormProps) {
+  const [formData, setFormData] = useState({
+    email: "",
+    first_name: "",
+    last_name: "",
+  })
+  const [emailError, setEmailError] = useState<string | undefined>()
+
+  const addAdmin = useMutation({
+    mutationFn: () =>
+      sdk.client.fetch("/admin/vendors/admins", {
+        method: "POST",
+        body: {
+          vendor_id: vendorId,
+          email: formData.email,
+          first_name: formData.first_name || undefined,
+          last_name: formData.last_name || undefined,
+        },
+      }),
+    onSuccess: () => {
+      toast.success("Vendor admin added")
+      onSuccess()
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || "Failed to add vendor admin")
+    },
+  })
+
+  const handleSubmit = () => {
+    if (!formData.email) {
+      setEmailError("Email is required")
+      return
+    }
+    addAdmin.mutate()
+  }
+
+  return (
+    <div className="flex flex-col gap-y-4">
+      <div className="flex flex-col gap-y-2">
+        <Label>Email *</Label>
+        <Input
+          value={formData.email}
+          placeholder="admin@example.com"
+          onChange={(e) => {
+            setFormData({ ...formData, email: e.target.value })
+            setEmailError(undefined)
+          }}
+        />
+        {emailError && (
+          <Text size="small" className="text-ui-fg-error">
+            {emailError}
+          </Text>
+        )}
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="flex flex-col gap-y-2">
+          <Label>First name</Label>
+          <Input
+            value={formData.first_name}
+            onChange={(e) =>
+              setFormData({ ...formData, first_name: e.target.value })
+            }
+          />
+        </div>
+        <div className="flex flex-col gap-y-2">
+          <Label>Last name</Label>
+          <Input
+            value={formData.last_name}
+            onChange={(e) =>
+              setFormData({ ...formData, last_name: e.target.value })
+            }
+          />
+        </div>
+      </div>
+      <Button size="small" onClick={handleSubmit} isLoading={addAdmin.isPending}>
+        Save
+      </Button>
+    </div>
+  )
+}
+
+interface EditVendorDrawerProps {
+  vendor: Vendor
+  onSuccess: () => void
+}
+
+function EditVendorDrawer({ vendor, onSuccess }: EditVendorDrawerProps) {
+  const [formData, setFormData] = useState({
+    name: vendor.name,
+    handle: vendor.handle || "",
+    logo: vendor.logo || "",
+  })
+  const [nameError, setNameError] = useState<string | undefined>()
+
+  const updateVendor = useMutation({
+    mutationFn: () =>
+      sdk.client.fetch(`/admin/vendors/${vendor.id}`, {
+        method: "POST",
+        body: {
+          name: formData.name,
+          handle: formData.handle || undefined,
+          logo: formData.logo || null,
+        },
+      }),
+    onSuccess: () => {
+      toast.success("Vendor updated")
+      onSuccess()
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || "Failed to update vendor")
+    },
+  })
+
+  const handleSubmit = () => {
+    if (!formData.name) {
+      setNameError("Name is required")
+      return
+    }
+    updateVendor.mutate()
+  }
+
+  return (
+    <div className="flex flex-col gap-y-4">
+      <div className="flex flex-col gap-y-2">
+        <Label>Name *</Label>
+        <Input
+          value={formData.name}
+          onChange={(e) => {
+            setFormData({ ...formData, name: e.target.value })
+            setNameError(undefined)
+          }}
+        />
+        {nameError && (
+          <Text size="small" className="text-ui-fg-error">
+            {nameError}
+          </Text>
+        )}
+      </div>
+      <div className="flex flex-col gap-y-2">
+        <Label>Handle</Label>
+        <Input
+          value={formData.handle}
+          placeholder="acme"
+          onChange={(e) => setFormData({ ...formData, handle: e.target.value })}
+        />
+      </div>
+      <div className="flex flex-col gap-y-2">
+        <Label>Logo URL</Label>
+        <Input
+          value={formData.logo}
+          placeholder="https://..."
+          onChange={(e) => setFormData({ ...formData, logo: e.target.value })}
+        />
+      </div>
+    </div>
+  )
 }
 
 export default function VendorDetailPage() {
@@ -21,8 +190,14 @@ export default function VendorDetailPage() {
   const [searchParams] = useSearchParams()
   const { id } = useParams()
   const queryClient = useQueryClient()
+  const [addAdminOpen, setAddAdminOpen] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
 
   const activeTab = searchParams.get("tab") || "overview"
+
+  const invalidateVendor = () => {
+    queryClient.invalidateQueries({ queryKey: ["admin-vendor", id] })
+  }
 
   const { data, isLoading } = useQuery({
     queryFn: () =>
@@ -63,6 +238,15 @@ export default function VendorDetailPage() {
           <ArrowLeft />
         </Button>
         <Heading level="h1">{vendor.name}</Heading>
+        <Button
+          size="small"
+          variant="secondary"
+          className="ml-auto"
+          onClick={() => setEditOpen(true)}
+        >
+          <PencilSquare />
+          Edit
+        </Button>
       </div>
 
       <Tabs value={activeTab}>
@@ -116,6 +300,13 @@ export default function VendorDetailPage() {
 
         <Tabs.Content value="admins">
           <Container className="p-0">
+            <div className="flex items-center justify-between px-6 py-4">
+              <Heading level="h2">Vendor admins</Heading>
+              <Button size="small" onClick={() => setAddAdminOpen(true)}>
+                <Plus />
+                Add admin
+              </Button>
+            </div>
             {vendor.admins.length === 0 ? (
               <div className="p-6">
                 <Text size="small" leading="compact" className="text-ui-fg-subtle">
@@ -218,6 +409,60 @@ export default function VendorDetailPage() {
           )}
         </Tabs.Content>
       </Tabs>
+
+      <FocusModal open={addAdminOpen} onOpenChange={setAddAdminOpen}>
+        <FocusModal.Content>
+          <div className="flex h-full flex-col overflow-hidden">
+            <FocusModal.Header>
+              <div className="flex items-center justify-end gap-x-2">
+                <FocusModal.Close asChild>
+                  <Button size="small" variant="secondary">
+                    Cancel
+                  </Button>
+                </FocusModal.Close>
+              </div>
+            </FocusModal.Header>
+            <FocusModal.Body className="flex-1 overflow-auto">
+              <div className="flex h-full flex-col gap-y-6 overflow-y-auto px-6 py-6">
+                <Heading level="h2">Add vendor admin</Heading>
+                <AddAdminForm
+                  vendorId={vendor.id}
+                  onSuccess={() => {
+                    setAddAdminOpen(false)
+                    invalidateVendor()
+                  }}
+                />
+              </div>
+            </FocusModal.Body>
+          </div>
+        </FocusModal.Content>
+      </FocusModal>
+
+      <Drawer open={editOpen} onOpenChange={setEditOpen}>
+        <Drawer.Content>
+          <Drawer.Header>
+            <Drawer.Title>Edit vendor</Drawer.Title>
+          </Drawer.Header>
+          <Drawer.Body className="flex-1 overflow-auto p-4">
+            <EditVendorDrawer
+              vendor={vendor}
+              onSuccess={() => {
+                setEditOpen(false)
+                invalidateVendor()
+              }}
+            />
+          </Drawer.Body>
+          <Drawer.Footer>
+            <div className="flex items-center justify-end gap-x-2">
+              <Drawer.Close asChild>
+                <Button size="small" variant="secondary">
+                  Cancel
+                </Button>
+              </Drawer.Close>
+            </div>
+          </Drawer.Footer>
+        </Drawer.Content>
+      </Drawer>
     </div>
   )
 }

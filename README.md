@@ -330,13 +330,21 @@ Admin-scoped routes (used by the Admin UI pages under `overlay/backend/src/admin
 | Method | Route | Purpose |
 |--------|-------|---------|
 | `GET` | `/admin/vendors` | List vendors (`q`, `limit`, `offset`) |
+| `POST` | `/admin/vendors` | Create a vendor + its first admin |
 | `GET` | `/admin/vendors/:id` | Vendor detail incl. admins, products, orders |
+| `POST` | `/admin/vendors/:id` | Update vendor name / handle / logo |
 | `GET` | `/admin/vendors/admins` | List vendor admins across all vendors |
+| `POST` | `/admin/vendors/admins` | Add a vendor admin to a vendor |
 | `DELETE` | `/admin/vendors/admins/:id` | Delete a vendor admin from the Admin |
+| `GET` | `/admin/products/:id/vendor` | Vendor linked to a product |
+| `GET` | `/admin/orders/:id/vendor` | Vendor linked to a (child) order |
 
 The Admin UI adds a **Vendors** page (`/vendors` and `/vendors/:id`, with
-Overview / Admins / Products / Orders tabs) and a **Settings → Meilisearch**
-page with a "Sync Data to Meilisearch" button.
+Overview / Admins / Products / Orders tabs), a **Vendor Admins** page, and a
+**Settings → Meilisearch** page with a "Sync Data to Meilisearch" button. From
+the Admin you can create vendors, add/remove vendor admins, and edit vendor
+details. Product and order detail pages show the owning vendor (if linked)
+with a link back to the vendor page.
 
 Meilisearch endpoints added by the overlay:
 
