@@ -12,6 +12,15 @@ set -e
 
 MODE="${MEDUSA_WORKER_MODE:-shared}"
 
+# Never fall back to the well-known "supersecret" in production: that would
+# silently ship predictable auth secrets. Local dev keeps the config fallback.
+if [ "${NODE_ENV:-production}" != "development" ]; then
+  if [ -z "${JWT_SECRET:-}" ] || [ -z "${COOKIE_SECRET:-}" ]; then
+    echo "[medusa] JWT_SECRET and COOKIE_SECRET must be set" >&2
+    exit 1
+  fi
+fi
+
 echo "[medusa] worker mode: $MODE"
 
 wait_for_db() {

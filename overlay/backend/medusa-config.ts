@@ -65,7 +65,7 @@ const providerModules = [
                   file_url: process.env.S3_FILE_URL,
                   access_key_id: process.env.S3_ACCESS_KEY_ID,
                   secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
-                  region: process.env.S3_REGION,
+                  region: process.env.S3_REGION ?? "us-east-1",
                   bucket: process.env.S3_BUCKET,
                   ...(process.env.S3_ENDPOINT
                     ? { endpoint: process.env.S3_ENDPOINT }

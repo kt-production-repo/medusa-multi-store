@@ -279,6 +279,13 @@ Set `SENDGRID_API_KEY` and `SENDGRID_FROM` (a verified SendGrid sender) on
 **both** backend services. The default local (feed) provider is kept alongside
 it; SendGrid owns the `email` channel.
 
+An overlay subscriber (`overlay/backend/src/subscribers/order-notifications.ts`)
+sends content-based emails (no SendGrid template needed) when an order is
+placed (`order.placed`) or fulfilled/shipped (`shipment.created`), using the
+order's `email` and `display_id`. Emails are skipped (logged) when no order or
+email can be resolved, and the whole subscriber is a no-op if `SENDGRID_API_KEY`
+is unset.
+
 All provider packages ship inside the backend image already — no dependency
 changes needed.
 
