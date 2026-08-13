@@ -4,22 +4,27 @@
 
 **Security:** the storefront never holds the Meili master key. It queries `POST /store/products/search` on the Medusa backend (public, publishable-key protected), which returns raw Meili `hits` whose `id` = product id. Full priced products are hydrated via `GET /store/products?id=[ids]&region_id=…&fields=…`, reusing the existing `listProducts` pattern. The JS SDK auto-attaches `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`.
 
-**Backend enhancement found during audit:** the current `/store/products/search` route only accepts `{ q }`. The plan adds optional `limit`/`offset` forwarding (additive — route + service are overlay-owned) so the page can paginate.
+**Backend enhancement:** the `/store/products/search` route originally accepted only `{ q }`. It now also accepts optional `limit`/`offset`, forwarded to the meilisearch client, with a response that includes `hits` + `estimatedTotalHits` + `query` + `processingTimeMs` for pagination.
+
+**No env flag:** Option B has no header bar to toggle, and `searchProducts` already catches backend/Meili errors and returns `[]` (graceful "No products found" state), so `NEXT_PUBLIC_MEILISEARCH_ENABLED` is not required. This keeps the storefront Surface area minimal.
 
 ## Checklist
 
-- [ ] 0. Create `overlay/storefront/src/` skeleton + this plan file.
-- [ ] 1. Backend search route + service enhancement (pagination): `route.ts` schema gains `limit`/`offset` → forwarded to `service.search(q, {limit, offset})`.
-- [ ] 2. Storefront search data fn: `overlay/storefront/src/lib/data/search.ts` (`"use server"`): `searchProducts({q, countryCode, limit?, offset?})` → POST search → collect `hit.id` → GET `/store/products` hydrate → `{products, count}`.
-- [ ] 3. Search bar component: `overlay/storefront/src/modules/search/components/search-bar/index.tsx` (client): input + `MagnifyingGlass` icon (`@medusajs/icons`), Enter → `router.replace(/<cc>/search?q=…)`, hidden when `NEXT_PUBLIC_MEILISEARCH_ENABLED=false`.
-- [ ] 4. Search results page: `overlay/storefront/src/app/[countryCode]/(main)/search/page.tsx`: reads `q`+`page`, calls `searchProducts`, renders existing `ProductPreview` grid, `SkeletonProductGrid` fallback, empty state.
-- [ ] 5. `deploy/storefront/Dockerfile` builder: add `COPY overlay/storefront/src/ ./src/` after `COPY apps/storefront/ ./`.
-- [ ] 6. `scripts/check-overlay.sh`: add `check overlay/storefront/src apps/storefront/src` (additive only).
-- [ ] 7. `env/storefront.env.example`: add `NEXT_PUBLIC_MEILISEARCH_ENABLED=true` to build args + runtime env.
-- [ ] 8. `README.md`: add `overlay/storefront/**` to storefront Watch Paths; minor "3.6 Storefront search" note; fix §5 ("not wired up yet" → live).
-- [ ] 9. `add-meilisearch.md`: check off step 22.
-- [ ] 10. Guardrails: `./scripts/check-overlay.sh` exits 0; `git status --porcelain apps/` empty.
-- [ ] 11. Smoke test (docker compose, seeded): `/<cc>/search?q=…` renders; Enter navigates/paginates; empty→graceful; `=false` builds & boots fine.
+- [x] 0. Create `overlay/storefront/src/` skeleton + this plan file.
+- [x] 1. Backend route + service enhancement (pagination):
+  - `overlay/backend/src/modules/meilisearch/service.ts`: `import type { SearchParams }`; `search(query, type?, options?: SearchParams)` forwards to `index.search`.
+  - `overlay/backend/src/api/store/products/search/route.ts`: schema gains optional `limit`/`offset`; response returns `hits` + `estimatedTotalHits` + `query` + `processingTimeMs`.
+- [x] 2. Storefront search data fn: `overlay/storefront/src/lib/data/search.ts` (`"use server"`): `searchProducts({q, countryCode, page, limit})` → POST `/store/products/search` → collect `hit.id` → GET `/store/products` hydrate → `{products, count, nextPage}`. Errors → empty.
+- [x] 3. Search bar + results page + /search route:
+  - `overlay/storefront/src/modules/search/components/search-bar/index.tsx` (client): input + `MagnifyingGlass` icon (`@medusajs/icons`, exported), Enter → `router.replace(/{cc}/search?q=…)`.
+  - `overlay/storefront/src/modules/search/components/search-results/index.tsx` (server): fetches + renders existing `ProductPreview` grid + `Pagination`, empty/skeleton states.
+  - `overlay/storefront/src/app/[countryCode]/(main)/search/page.tsx`: page shell (SearchBar + Suspense'd SearchResults).
+- [ ] 4. `deploy/storefront/Dockerfile` builder: add `COPY overlay/storefront/src/ ./src/` after `COPY apps/storefront/ ./`.
+- [ ] 5. `scripts/check-overlay.sh`: add `check overlay/storefront/src apps/storefront/src` (additive only).
+- [ ] 6. `README.md`: add `overlay/storefront/**` to storefront Watch Paths; minor storefront-search note; fix §5 ("not wired up yet" → live).
+- [ ] 7. `add-meilisearch.md`: check off step 22.
+- [ ] 8. Guardrails: `./scripts/check-overlay.sh` exits 0; `git status --porcelain apps/` empty.
+- [ ] 9. Smoke test (docker compose, seeded): `/<cc>/search?q=…` renders results; Enter navigates/paginates; empty/gibberish → graceful empty state; meili down → no crash.
 
 ## Files touched (all ours; none under `apps/`)
 
@@ -27,11 +32,11 @@
 |------|--------|----------|
 | `overlay/storefront/src/lib/data/search.ts` | new | yes |
 | `overlay/storefront/src/modules/search/components/search-bar/index.tsx` | new | yes |
+| `overlay/storefront/src/modules/search/components/search-results/index.tsx` | new | yes |
 | `overlay/storefront/src/app/[countryCode]/(main)/search/page.tsx` | new | yes |
 | `overlay/backend/src/api/store/products/search/route.ts` | extend | yes (route is ours) |
 | `overlay/backend/src/modules/meilisearch/service.ts` | extend | yes |
 | `deploy/storefront/Dockerfile` | add COPY overlay/storefront/src/ ./src/ | yes |
 | `scripts/check-overlay.sh` | add storefront branch | yes |
-| `env/storefront.env.example` | add env (build+runtime) | yes |
-| `README.md` | watch path + 3.6 + §5 fix | yes |
+| `README.md` | watch path + storefront search note + §5 fix | yes |
 | `add-meilisearch.md` | check step 22 | yes |

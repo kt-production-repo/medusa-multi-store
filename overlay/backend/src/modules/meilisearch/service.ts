@@ -1,4 +1,5 @@
 import { MedusaError } from "@medusajs/framework/utils"
+import type { SearchParams } from "meilisearch"
 
 type MeilisearchOptions = {
   host: string
@@ -7,6 +8,9 @@ type MeilisearchOptions = {
 }
 
 export type MeilisearchIndexType = "product"
+
+// Re-exported so the API layer can stay decoupled from the meilisearch package.
+export type MeilisearchSearchOptions = SearchParams
 
 type IndexedDocument = {
   id: string
@@ -79,7 +83,6 @@ export default class MeilisearchModuleService {
         try {
           return await index.getDocument(id)
         } catch (error) {
-          // Document not found, return null
           return null
         }
       })
@@ -99,11 +102,15 @@ export default class MeilisearchModuleService {
     await index.deleteDocuments(documentIds)
   }
 
-  async search(query: string, type: MeilisearchIndexType = "product") {
+  async search(
+    query: string,
+    type: MeilisearchIndexType = "product",
+    options?: MeilisearchSearchOptions
+  ) {
     const client = await this.getClient()
     const indexName = await this.getIndexName(type)
     const index = client.index(indexName)
 
-    return await index.search(query)
+    return await index.search(query, options)
   }
 }
