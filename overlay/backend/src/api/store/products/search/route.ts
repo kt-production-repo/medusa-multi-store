@@ -5,7 +5,7 @@ import MeilisearchModuleService, {
   MeilisearchSearchOptions,
 } from "../../../../modules/meilisearch/service"
 
-export const PostStoreProductSearchSchema = z.object({
+export const PostStoreProductSearchSchema = z.strictObject({
   q: z.string().trim().min(1),
   limit: z.coerce.number().int().min(1).max(100).optional(),
   offset: z.coerce.number().int().min(0).optional(),

@@ -17,7 +17,15 @@ const createVendorStep = createStep(
     const marketplaceModuleService: MarketplaceModuleService = 
       container.resolve(MARKETPLACE_MODULE)
 
-    const vendor = await marketplaceModuleService.createVendors(vendorData)
+    const vendor = await marketplaceModuleService.createVendors({
+      ...vendorData,
+      handle:
+        vendorData.handle ??
+        vendorData.name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, ""),
+    })
 
     return new StepResponse(vendor, vendor.id)
   },

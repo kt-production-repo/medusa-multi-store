@@ -325,6 +325,12 @@ Vendor endpoints added by the overlay (authenticated as a vendor):
 | `DELETE` | `/vendors/admins/:id` | Remove one of that vendor's admins |
 | `POST` | `/store/carts/:id/complete-vendor` | Checkout, splitting one cart into per-vendor orders |
 
+> **Note:** the stock storefront (`apps/storefront`, vendored read-only) still
+> completes carts with the standard `POST /store/carts/:id/complete`. The
+> split-order route only fires for a custom storefront integration that calls
+> `/complete-vendor` — see `PLAN.md`. `apps/storefront` cannot be patched
+> (AGENTS.md additive-only rule).
+
 Admin-scoped routes (used by the Admin UI pages under `overlay/backend/src/admin/`):
 
 | Method | Route | Purpose |

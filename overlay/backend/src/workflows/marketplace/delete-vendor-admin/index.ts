@@ -1,9 +1,9 @@
-import { MedusaError } from "@medusajs/framework/utils"
 import {
   WorkflowData,
   WorkflowResponse,
   createWorkflow,
   transform,
+  when,
 } from "@medusajs/framework/workflows-sdk"
 import { 
   setAuthAppMetadataStep,
@@ -13,6 +13,7 @@ import deleteVendorAdminStep from "./steps/delete-vendor-admin"
 
 export type DeleteVendorAdminWorkflow = {
   id: string
+  vendor_id?: string
 }
 
 export const deleteVendorAdminWorkflow = createWorkflow(
@@ -36,23 +37,19 @@ export const deleteVendorAdminWorkflow = createWorkflow(
     const authIdentity = transform(
       { authIdentities },
       ({ authIdentities }) => {
-        const authIdentity = authIdentities[0]
-
-        if (!authIdentity) {
-          throw new MedusaError(
-            MedusaError.Types.NOT_FOUND,
-            "Auth identity not found"
-          )
-        }
-
-        return authIdentity
+        return authIdentities[0]
       }
     )
 
-    setAuthAppMetadataStep({
-      authIdentityId: authIdentity.id,
-      actorType: "vendor",
-      value: null,
+    // Admin-created vendor admins (via /admin/vendors or /admin/vendors/admins)
+    // have no auth identity — only self-registered vendors do. Clearing the
+    // auth metadata must not fail the delete for them.
+    when(authIdentity, (identity) => !!identity).then(() => {
+      setAuthAppMetadataStep({
+        authIdentityId: authIdentity.id,
+        actorType: "vendor",
+        value: null,
+      })
     })
 
     return new WorkflowResponse(input.id)

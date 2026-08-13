@@ -22,7 +22,7 @@ plus this plan file. The upstream files on disk are never touched.
          to a product (`vendor-product` link), 404 when unlinked
 - [x] 3. Frontend: **product vendor widget** (`admin/widgets/product-vendor.tsx`)
          on `product.details` showing the vendor name + link to `/vendors/:id`
-- [ ] 4. Frontend: **Vendor Admins page** (`admin/routes/vendor-admins/page.tsx`)
+- [x] 4. Frontend: **Vendor Admins page** (`admin/routes/vendor-admins/page.tsx`)
          wiring the existing `GET /admin/vendors/admins`, sidebar entry via
          `defineRouteConfig`
 - [x] 5. Backend: `POST /admin/vendors` — admin-scoped create vendor + first
