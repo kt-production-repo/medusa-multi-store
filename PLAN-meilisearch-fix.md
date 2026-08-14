@@ -17,7 +17,7 @@
 - [x] 4. Remove duplicate `COPY overlay/storefront/src/ ./src/` in storefront Dockerfile
 - [x] 5. Storefront header integration — search page at `/[countryCode]/search` works; header link requires upstream nav template modification (blocked by overlay additive-only rule)
 - [x] 6. Run `check-overlay.sh` — PASS (overlay is additive-only)
-- [ ] 7. Smoke test: build backend Docker image, boot, verify `/admin/meilisearch/sync` + `/store/products/search`
+- [x] 7. Smoke test — Docker image builds, `MODULE: meilisearch` loads, `Meilisearch index configured with settings`, search returns `{ hits, estimatedTotalHits, query, processingTimeMs }`, sync returns 200
 
 ## Deployment Order
 

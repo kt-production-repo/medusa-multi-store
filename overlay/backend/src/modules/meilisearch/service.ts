@@ -37,7 +37,7 @@ function extractLogger(container: unknown): LoggerLike {
   try {
     const c = container as { resolve?: (key: string) => unknown }
     const logger = c?.resolve?.("logger") as LoggerLike | undefined
-    if (logger?.warn && logger?.info) return logger
+    if (logger !== undefined) return logger
   } catch {}
   return {
     warn: (msg: string, ...args: unknown[]) => console.warn(msg, ...args),
