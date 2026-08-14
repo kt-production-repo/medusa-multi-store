@@ -419,6 +419,64 @@ edited locally. Preserve that invariant.
 - Official docs: <https://docs.medusajs.com> · marketplace recipe:
   <https://docs.medusajs.com/resources/recipes/marketplace/examples/vendors>
 
+---
+
+## Official Documentation Reference
+
+This section mirrors the structure of the official Medusa documentation at <https://docs.medusajs.com/learn/> and <https://docs.medusajs.com/resources/> (indexed at <https://docs.medusajs.com/llms.txt>).
+
+### Learn (Concepts & Guides)
+
+| Section | Key Topics |
+|---------|------------|
+| **Get Started** | [Installation](https://docs.medusajs.com/learn/installation), [Docker Install](https://docs.medusajs.com/learn/installation/docker), [Build Application](https://docs.medusajs.com/learn/build), [Update Medusa](https://docs.medusajs.com/learn/update) |
+| **Introduction** | [Architecture](https://docs.medusajs.com/learn/introduction/architecture), [Build with AI/LLMs](https://docs.medusajs.com/learn/introduction/build-with-llms-ai), [From v1 to v2](https://docs.medusajs.com/learn/introduction/from-v1-to-v2) |
+| **Fundamentals → Framework** | [Framework Overview](https://docs.medusajs.com/learn/fundamentals/framework), [API Routes](https://docs.medusajs.com/learn/fundamentals/api-routes) (parameters, HTTP methods, responses, validation, middlewares, protected routes, CORS, additional data, errors, overrides, body parsing, localization, custom links), [Data Models](https://docs.medusajs.com/learn/fundamentals/data-models) (properties, relationships, JSON properties, indexes, check constraints, type inference, migrations), [Events & Subscribers](https://docs.medusajs.com/learn/fundamentals/events-and-subscribers) (data payload, emit events, priority), [Module Links](https://docs.medusajs.com/learn/fundamentals/module-links) (index module, link, query, directions, custom columns, query context, read-only), [Plugins](https://docs.medusajs.com/learn/fundamentals/plugins) (create plugin, scheduled jobs), [Scheduled Jobs](https://docs.medusajs.com/learn/fundamentals/scheduled-jobs) (interval, execution number), [Workflows](https://docs.medusajs.com/learn/fundamentals/workflows) (compensation, hooks, when-then, parallel steps, nested workflows, errors, locks, long-running, retries, multiple step usage, transform, timeout, constraints, store executions), [Custom CLI Scripts](https://docs.medusajs.com/learn/fundamentals/custom-cli-scripts) (seed data) |
+| **Admin Development** | [Admin Overview](https://docs.medusajs.com/learn/fundamentals/admin), [Widgets](https://docs.medusajs.com/learn/fundamentals/admin/widgets), [UI Routes](https://docs.medusajs.com/learn/fundamentals/admin/ui-routes), [Routing](https://docs.medusajs.com/learn/fundamentals/admin/routing), [Environment Variables](https://docs.medusajs.com/learn/fundamentals/admin/environment-variables), [Constraints](https://docs.medusajs.com/learn/fundamentals/admin/constraints), [Tips](https://docs.medusajs.com/learn/fundamentals/admin/tips), [Translations](https://docs.medusajs.com/learn/fundamentals/admin/translations) |
+| **Customization** | [Custom Features](https://docs.medusajs.com/learn/customization/custom-features) (brand module, workflow, API route), [Extend Features](https://docs.medusajs.com/learn/customization/extend-features) (define link, extend create product, query linked records), [Customize Admin](https://docs.medusajs.com/learn/customization/customize-admin) (brands route, product widget), [Integrate Systems](https://docs.medusajs.com/learn/customization/integrate-systems) (third-party service, sync brands, schedule sync), [Reuse with Plugins](https://docs.medusajs.com/learn/customization/reuse-customizations), [Next Steps](https://docs.medusajs.com/learn/customization/next-steps) |
+| **Debugging & Testing** | [Testing Tools](https://docs.medusajs.com/learn/debugging-and-testing/testing-tools) (integration tests for API routes, workflows, module tests), [Debug Workflows](https://docs.medusajs.com/learn/debugging-and-testing/debug-workflows), [Logging](https://docs.medusajs.com/learn/debugging-and-testing/logging) (custom logger), [Instrumentation](https://docs.medusajs.com/learn/debugging-and-testing/instrumentation), [Feature Flags](https://docs.medusajs.com/learn/debugging-and-testing/feature-flags) (create custom flag) |
+| **Deployment & Configuration** | [Deployment Overview](https://docs.medusajs.com/learn/deployment), [General Deployment](https://docs.medusajs.com/learn/deployment/general), [Worker Mode](https://docs.medusajs.com/learn/production/worker-mode), [Medusa Config](https://docs.medusajs.com/learn/configurations/medusa-config) (asymmetric encryption, pnpm, TypeScript aliases) |
+| **Storefront Development** | [Storefront Overview](https://docs.medusajs.com/learn/storefront-development) |
+| **Best Practices** | [Third-Party Syncing](https://docs.medusajs.com/learn/best-practices/third-party-sync) |
+| **Codemods** | [Codemods Overview](https://docs.medusajs.com/learn/codemods), [Replace Imports](https://docs.medusajs.com/learn/codemods/replace-imports), [Replace Zod Imports](https://docs.medusajs.com/learn/codemods/replace-zod-imports) |
+| **Contributing** | [Docs Guidelines](https://docs.medusajs.com/learn/resources/contribution-guidelines/docs), [Admin Translations](https://docs.medusajs.com/learn/resources/contribution-guidelines/admin-translations), [Usage Info](https://docs.medusajs.com/learn/resources/usage) |
+
+### Resources (Reference & Tools)
+
+| Category | Key References |
+|----------|----------------|
+| **Commerce Modules** | [Cart](https://docs.medusajs.com/resources/commerce-modules/cart), [Payment](https://docs.medusajs.com/resources/commerce-modules/payment), [Customer](https://docs.medusajs.com/resources/commerce-modules/customer), [Pricing](https://docs.medusajs.com/resources/commerce-modules/pricing), [Promotion](https://docs.medusajs.com/resources/commerce-modules/promotion), [Product](https://docs.medusajs.com/resources/commerce-modules/product), [Order](https://docs.medusajs.com/resources/commerce-modules/order), [Inventory](https://docs.medusajs.com/resources/commerce-modules/inventory), [Fulfillment](https://docs.medusajs.com/resources/commerce-modules/fulfillment), [Stock Location](https://docs.medusajs.com/resources/commerce-modules/stock-location), [Region](https://docs.medusajs.com/resources/commerce-modules/region), [Sales Channel](https://docs.medusajs.com/resources/commerce-modules/sales-channel), [Tax](https://docs.medusajs.com/resources/commerce-modules/tax), [Currency](https://docs.medusajs.com/resources/commerce-modules/currency), [API Keys](https://docs.medusajs.com/resources/commerce-modules/api-key), [User](https://docs.medusajs.com/resources/commerce-modules/user), [Auth](https://docs.medusajs.com/resources/commerce-modules/auth) |
+| **Infrastructure Modules** | [Analytics](https://docs.medusajs.com/resources/infrastructure-modules/analytics), [Caching](https://docs.medusajs.com/resources/infrastructure-modules/caching), [Event](https://docs.medusajs.com/resources/infrastructure-modules/event), [File](https://docs.medusajs.com/resources/infrastructure-modules/file), [Locking](https://docs.medusajs.com/resources/infrastructure-modules/locking), [Notification](https://docs.medusajs.com/resources/infrastructure-modules/notification), [Workflow Engine](https://docs.medusajs.com/resources/infrastructure-modules/workflow-engine) |
+| **Build** | [Recipes](https://docs.medusajs.com/resources/recipes) (incl. [Marketplace Vendors](https://docs.medusajs.com/resources/recipes/marketplace/examples/vendors)), [How-to & Tutorials](https://docs.medusajs.com/resources/how-to-tutorials), [Integrations](https://docs.medusajs.com/resources/integrations), [Storefront Development](https://docs.medusajs.com/resources/storefront-development) |
+| **Tools** | [create-medusa-app](https://docs.medusajs.com/resources/create-medusa-app), [Medusa CLI](https://docs.medusajs.com/resources/medusa-cli), [JS SDK](https://docs.medusajs.com/resources/js-sdk), [Next.js Starter](https://docs.medusajs.com/resources/nextjs-starter), [Medusa UI](https://docs.medusajs.com/ui) |
+| **API References** | [Admin API](https://docs.medusajs.com/api/admin), [Store API](https://docs.medusajs.com/api/store) |
+| **Development References** | [Admin Injection Zones](https://docs.medusajs.com/resources/admin-widget-injection-zones), [Container Resources](https://docs.medusajs.com/resources/medusa-container-resources), [Core Workflows](https://docs.medusajs.com/resources/medusa-workflows-reference), [Data Model Language](https://docs.medusajs.com/resources/references/data-model), [Data Model Repository](https://docs.medusajs.com/resources/data-model-repository-reference), [Events Reference](https://docs.medusajs.com/resources/references/events), [Helper Steps](https://docs.medusajs.com/resources/references/helper-steps), [Service Factory](https://docs.medusajs.com/resources/service-factory-reference), [Testing Framework](https://docs.medusajs.com/resources/test-tools-reference), [Workflows SDK](https://docs.medusajs.com/resources/references/workflows) |
+| **Medusa Admin** | [User Guide](https://docs.medusajs.com/user-guide) |
+| **Cloud** | [Medusa Cloud](https://docs.medusajs.com/cloud) |
+
+### Quick Navigation by Task
+
+| Task | Best Entry Point |
+|------|------------------|
+| Create a custom module | [Modules](https://docs.medusajs.com/learn/fundamentals/modules) → [Data Models](https://docs.medusajs.com/learn/fundamentals/data-models) → [Service](https://docs.medusajs.com/learn/fundamentals/modules/service-factory) |
+| Build a workflow | [Workflows](https://docs.medusajs.com/learn/fundamentals/workflows) → [Steps](https://docs.medusajs.com/learn/fundamentals/workflows) → [Compensation](https://docs.medusajs.com/learn/fundamentals/workflows/compensation-function) |
+| Add an API route | [API Routes](https://docs.medusajs.com/learn/fundamentals/api-routes) → [Validation](https://docs.medusajs.com/learn/fundamentals/api-routes/validation) → [Protected Routes](https://docs.medusajs.com/learn/fundamentals/api-routes/protected-routes) |
+| Extend core commerce | [Extend Features](https://docs.medusajs.com/learn/customization/extend-features) → [Module Links](https://docs.medusajs.com/learn/fundamentals/module-links) |
+| Customize Admin UI | [Admin Development](https://docs.medusajs.com/learn/fundamentals/admin) → [Widgets](https://docs.medusajs.com/learn/fundamentals/admin/widgets) → [UI Routes](https://docs.medusajs.com/learn/fundamentals/admin/ui-routes) |
+| Build a storefront | [Storefront Development](https://docs.medusajs.com/learn/storefront-development) → [JS SDK](https://docs.medusajs.com/resources/js-sdk) → [Next.js Starter](https://docs.medusajs.com/resources/nextjs-starter) |
+| Deploy to production | [Deployment](https://docs.medusajs.com/learn/deployment) → [Worker Mode](https://docs.medusajs.com/learn/production/worker-mode) → [Medusa Config](https://docs.medusajs.com/learn/configurations/medusa-config) |
+| Write tests | [Testing Tools](https://docs.medusajs.com/learn/debugging-and-testing/testing-tools) → [Integration Tests](https://docs.medusajs.com/learn/debugging-and-testing/testing-tools/integration-tests) |
+| Find commerce module reference | [Commerce Modules](https://docs.medusajs.com/resources/commerce-modules) |
+| Find infrastructure module reference | [Infrastructure Modules](https://docs.medusajs.com/resources/infrastructure-modules) |
+| API route reference | [Admin API](https://docs.medusajs.com/api/admin) / [Store API](https://docs.medusajs.com/api/store) |
+
+### Documentation Index
+
+For a complete machine-readable index of all documentation pages, see:
+- **llms.txt**: <https://docs.medusajs.com/llms.txt> (used by AI agents for full context)
+
+---
+
 ## Related skills
 
 The 18 official Medusa skills are vendored alongside this one. Load them for
