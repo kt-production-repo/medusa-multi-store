@@ -28,7 +28,6 @@ RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY apps/storefront/ ./
-COPY overlay/storefront/src/ ./src/
 
 # Our additive storefront overlay (search UI, etc.). Copied AFTER upstream so it
 # lays on top without mutating apps/storefront — same pattern as the backend
