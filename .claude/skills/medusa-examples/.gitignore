@@ -1,4 +1,2 @@
-# The cloned examples repo is a reference snapshot, not tracked in git history.
-# Re-run `git clone --depth 1 https://github.com/medusajs/examples.git repo`
-# when you need a fresh copy; the existing folder can be deleted safely.
-repo/
+# The cloned examples repo is intentionally left empty.
+# Populate it with: git clone --depth 1 https://github.com/medusajs/examples.git repo
