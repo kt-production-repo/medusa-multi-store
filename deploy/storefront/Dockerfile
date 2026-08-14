@@ -30,6 +30,11 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY apps/storefront/ ./
 COPY overlay/storefront/src/ ./src/
 
+# Our additive storefront overlay (search UI, etc.). Copied AFTER upstream so it
+# lays on top without mutating apps/storefront — same pattern as the backend
+# Dockerfile. Paths here do not exist upstream (see scripts/check-overlay.sh).
+COPY overlay/storefront/src/ ./src/
+
 # check-env-variables.js hard-exits the build if the publishable key is
 # absent, and NEXT_PUBLIC_* values are inlined into the client bundle.
 # Both therefore must arrive as build args, not runtime env.
