@@ -32,6 +32,11 @@ COPY apps/storefront/ ./
 # Our additive storefront overlay (search UI, etc.). Copied AFTER upstream so it
 # lays on top without mutating apps/storefront — same pattern as the backend
 # Dockerfile. Paths here do not exist upstream (see scripts/check-overlay.sh).
+#
+# CACHEBUST: bump this value to force Docker to invalidate the overlay layer
+# and everything downstream (build + runtime). Without this, BuildKit may
+# serve a stale cached image even when overlay files change.
+ARG CACHEBUST=1
 COPY overlay/storefront/src/ ./src/
 
 # check-env-variables.js hard-exits the build if the publishable key is
