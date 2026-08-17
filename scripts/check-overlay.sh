@@ -11,8 +11,12 @@ cd "$(dirname "$0")/.."
 
 fail=0
 
+# Paths (relative to overlay dir) that are ALLOWED to collide with upstream.
+backend_intentional="medusa-config.ts"
+storefront_intentional="modules/layout/templates/nav/index.tsx"
+
 check() {
-  local overlay_dir="$1" upstream_dir="$2"
+  local overlay_dir="$1" upstream_dir="$2" intentional="$3"
   [ -d "$overlay_dir" ] || return 0
   if [ ! -d "$upstream_dir" ]; then
     echo "SKIP  $upstream_dir not present (run scripts/bootstrap.sh)"
@@ -21,8 +25,13 @@ check() {
   while IFS= read -r f; do
     rel="${f#"$overlay_dir"/}"
     if [ -e "$upstream_dir/$rel" ]; then
-      echo "COLLISION  $overlay_dir/$rel would overwrite upstream $upstream_dir/$rel"
-      fail=1
+      # Skip files that are intentional replacements
+      if echo "$intentional" | grep -qx "$rel"; then
+        echo "ok         $overlay_dir/$rel (intentional replacement)"
+      else
+        echo "COLLISION  $overlay_dir/$rel would overwrite upstream $upstream_dir/$rel"
+        fail=1
+      fi
     else
       echo "ok         $overlay_dir/$rel"
     fi
@@ -30,19 +39,11 @@ check() {
 }
 
 echo "== backend src overlay =="
-check overlay/backend/src apps/backend/src
+check overlay/backend/src apps/backend/src "$backend_intentional"
 
 echo
 echo "== storefront src overlay (additive only) =="
-check overlay/storefront/src apps/storefront/src
-
-echo
-echo "== intentional replacements (these MUST collide) =="
-for f in medusa-config.ts; do
-  if [ -e "apps/backend/$f" ]; then
-    echo "ok         overlay/backend/$f replaces apps/backend/$f (by design)"
-  fi
-done
+check overlay/storefront/src apps/storefront/src "$storefront_intentional"
 
 echo
 if [ "$fail" -ne 0 ]; then
