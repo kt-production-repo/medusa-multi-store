@@ -20,7 +20,7 @@ export function SubmitButton({
   const variantClasses = {
     primary: "btn-primary",
     secondary: "btn-outline",
-    transparent: "!bg-transparent !text-grey-700 hover:!bg-surface",
+    transparent: "!bg-transparent !text-grey-70 hover:!bg-surface",
     danger: "!bg-rose-600 hover:!bg-rose-700 text-white",
   }
 

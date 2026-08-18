@@ -28,7 +28,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
   images,
 }) => {
   if (!product || !product.id) {
-    return notFound()
+    notFound()
   }
 
   return (

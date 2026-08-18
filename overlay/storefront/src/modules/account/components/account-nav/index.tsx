@@ -91,7 +91,7 @@ const AccountNav = ({
                 <li>
                   <button
                     type="button"
-                    className="flex items-center justify-between py-4 border-b border-grey-10 px-8 w-full text-grey-700 hover:text-brand-dark transition-colors"
+                    className="flex items-center justify-between py-4 border-b border-grey-10 px-8 w-full text-grey-70 hover:text-brand-dark transition-colors"
                     onClick={handleLogout}
                     data-testid="logout-button"
                   >
@@ -191,7 +191,7 @@ const AccountNavLink = ({
         "block py-2 px-4 rounded-lg transition-all duration-200",
         active
           ? "bg-brand-dark text-white font-medium"
-          : "text-grey-700 hover:bg-surface hover:text-brand-dark"
+          :         "text-grey-70 hover:bg-surface hover:text-brand-dark"
       )}
       data-testid={dataTestId}
     >
