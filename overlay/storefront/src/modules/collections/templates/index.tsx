@@ -45,9 +45,9 @@ export default function CollectionTemplate({
           </h1>
 
           {/* Description */}
-          {collection.description && (
+          {typeof collection.metadata?.description === "string" && (
             <p className="text-lg text-grey-50 max-w-2xl">
-              {collection.description}
+              {collection.metadata.description}
             </p>
           )}
         </div>

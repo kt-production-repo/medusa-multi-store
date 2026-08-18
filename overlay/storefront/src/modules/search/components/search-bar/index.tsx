@@ -39,7 +39,7 @@ export default function SearchBar({
     >
       <div className="relative w-full">
         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-grey-50">
-          <MagnifyingGlass size={20} />
+          <MagnifyingGlass className="w-5 h-5" />
         </div>
         <input
           type="search"
