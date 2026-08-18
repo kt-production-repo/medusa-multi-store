@@ -21,6 +21,11 @@ modules/layout/templates/footer/index.tsx
 modules/layout/components/side-menu/index.tsx
 modules/layout/components/cart-button/index.tsx
 modules/layout/components/cart-dropdown/index.tsx
+modules/products/components/product-preview/index.tsx
+modules/products/components/product-preview/price.tsx
+modules/categories/templates/index.tsx
+modules/collections/templates/index.tsx
+modules/products/templates/index.tsx
 styles/globals.css"
 storefront_root_intentional="tailwind.config.js"
 

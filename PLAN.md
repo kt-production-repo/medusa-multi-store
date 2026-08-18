@@ -67,15 +67,15 @@ All changes go under `overlay/storefront/src/` (additive only). Upstream `apps/s
 
 ---
 
-## Phase 5: Product & Category Pages
+## Phase 5: Product & Category Pages ✅
 
 **Goal:** Polish product cards and category pages to match the new design system.
 
-- [ ] **5.1** Redesign product card component: `rounded-2xl`, border, hover state, image aspect ratio, price formatting (no `/100` division)
-- [ ] **5.2** Redesign category page: grid layout with product cards, section spacing (`py-14 lg:py-32`)
-- [ ] **5.3** Redesign collection page: similar treatment to category
-- [ ] **5.4** Update product detail page: image gallery styling, button styles, spacing
-- [ ] **5.5** Ensure all price displays use correct Medusa format (stored as-is, display directly)
+- [x] **5.1** Redesign product card component: card class, rounded overflow, hover scale, square aspect ratio, price formatting
+- [x] **5.2** Redesign category page: breadcrumbs, large title, description, subcategory pills, scroll reveal
+- [x] **5.3** Redesign collection page: breadcrumbs, large title, description, scroll reveal
+- [x] **5.4** Update product detail page: 50/50 layout, breadcrumbs, reorganized info+actions+tabs
+- [x] **5.5** Ensure all price displays use correct Medusa format (display directly, no division)
 
 **Verify:** Product cards render with new style. Prices display correctly. Responsive grid works.
 
