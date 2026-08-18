@@ -108,17 +108,17 @@ All changes go under `overlay/storefront/src/` (additive only). Upstream `apps/s
 
 ---
 
-## Phase 8: Final Integration & Testing
+## Phase 8: Final Integration & Testing ✅
 
 **Goal:** End-to-end verification, performance check, and cleanup.
 
-- [ ] **8.1** Run `check-overlay.sh` — confirm no collisions
-- [ ] **8.2** Full responsive audit: mobile (375px), tablet (768px), desktop (1280px+)
-- [ ] **8.3** Performance check: no layout shift, images optimized, animations use `transform`/`opacity` only
-- [ ] **8.4** Verify all internal links work (nav, footer, product cards, category cards)
-- [ ] **8.5** Verify search flow end-to-end: icon -> search page -> results -> product detail
-- [ ] **8.6** Verify cart flow: add to cart -> cart dropdown -> checkout
-- [ ] **8.7** Final commit and push to both remotes
+- [x] **8.1** Run `check-overlay.sh` — confirm no collisions
+- [x] **8.2** Full responsive audit: mobile (375px), tablet (768px), desktop (1280px+)
+- [x] **8.3** Performance check: no layout shift, images optimized, animations use `transform`/`opacity` only
+- [x] **8.4** Verify all internal links work (nav, footer, product cards, category cards)
+- [x] **8.5** Verify search flow end-to-end: icon -> search page -> results -> product detail
+- [x] **8.6** Verify cart flow: add to cart -> cart dropdown -> checkout
+- [x] **8.7** Final commit and push to both remotes
 
 **Verify:** All pages render correctly. No console errors. Build succeeds. Deploy succeeds.
 
