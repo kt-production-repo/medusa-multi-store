@@ -1,10 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ShoppingBag, MagnifyingGlass } from "@medusajs/icons"
+import { ShoppingBag } from "@medusajs/icons"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CartButton from "@modules/layout/components/cart-button"
 import SideMenu from "@modules/layout/components/side-menu"
+import SearchDropdown from "@modules/layout/components/search-dropdown"
 import { StoreRegion } from "@medusajs/types"
 import { Locale } from "@lib/data/locales"
 
@@ -61,13 +62,9 @@ export default function NavUI({ regions, locales, currentLocale }: NavUIProps) {
           {/* Right: Search, Account, Cart */}
           <div className="flex items-center gap-3 h-full flex-1 basis-0 justify-end">
             <div className="hidden small:flex items-center gap-3 h-full">
-              <LocalizedClientLink
-                className={`icon-circle ${isScrolled ? "" : "!border-white/40 !text-white"}`}
-                href="/search"
-                data-testid="nav-search-link"
-              >
-                <MagnifyingGlass className="w-4 h-4" />
-              </LocalizedClientLink>
+              <div className={`${isScrolled ? "" : "[&>*]:!border-white/40 [&>*]:!text-white"}`}>
+                <SearchDropdown />
+              </div>
               <LocalizedClientLink
                 className={`nav-link text-sm font-medium ${
                   isScrolled ? "text-grey-70" : "text-white"

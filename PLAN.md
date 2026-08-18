@@ -89,7 +89,7 @@ All changes go under `overlay/storefront/src/` (additive only). Upstream `apps/s
 - [x] **6.2** Style search bar: rounded-full input with left-aligned icon, focus ring animation
 - [x] **6.3** Add search results count and "results for: {query}" header
 - [x] **6.4** Improve no-results state: friendly message with suggestion to browse categories
-- [x] **6.5** Add search icon in nav for quick access
+- [x] **6.5** Add instant search dropdown on nav search icon click with live results
 
 **Verify:** Search page matches design. Results render correctly. No-results state is helpful.
 
