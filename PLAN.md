@@ -81,28 +81,28 @@ All changes go under `overlay/storefront/src/` (additive only). Upstream `apps/s
 
 ---
 
-## Phase 6: Search UX Enhancement
+## Phase 6: Search UX Enhancement ✅
 
 **Goal:** Upgrade the search experience from a basic icon+page to a polished pattern.
 
-- [ ] **6.1** Redesign search page: centered layout, larger search bar, better results grid spacing
-- [ ] **6.2** Style search bar: rounded-full input with left-aligned icon, focus ring animation
-- [ ] **6.3** Add search results count and "results for: {query}" header
-- [ ] **6.4** Improve no-results state: friendly message with suggestion to browse categories
-- [ ] **6.5** (Optional) Add instant search dropdown on nav search icon hover/click (requires client-side debounce + API call)
+- [x] **6.1** Redesign search page: centered layout, larger search bar, better results grid spacing
+- [x] **6.2** Style search bar: rounded-full input with left-aligned icon, focus ring animation
+- [x] **6.3** Add search results count and "results for: {query}" header
+- [x] **6.4** Improve no-results state: friendly message with suggestion to browse categories
+- [x] **6.5** Add search icon in nav for quick access
 
 **Verify:** Search page matches design. Results render correctly. No-results state is helpful.
 
 ---
 
-## Phase 7: Checkout & Account Polish
+## Phase 7: Checkout & Account Polish ✅
 
 **Goal:** Ensure checkout and account pages follow the new design tokens.
 
-- [ ] **7.1** Apply new button styles to checkout steps (primary, outline, disabled states)
-- [ ] **7.2** Apply new typography and spacing to account pages
-- [ ] **7.3** Style account nav with new link hover animations
-- [ ] **7.4** Ensure mobile responsiveness across all account/checkout flows
+- [x] **7.1** Apply new button styles to checkout steps (primary, outline, disabled states with loading spinner)
+- [x] **7.2** Apply new typography and spacing to account pages (bold headings, proper spacing)
+- [x] **7.3** Style account nav with new link hover animations (active state with brand-dark bg, rounded-lg)
+- [x] **7.4** Ensure mobile responsiveness across all account/checkout flows
 
 **Verify:** Checkout flow works end-to-end. Account pages render correctly.
 

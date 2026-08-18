@@ -14,6 +14,7 @@ fail=0
 # Paths (relative to overlay dir) that are ALLOWED to collide with upstream.
 backend_intentional="medusa-config.ts"
 storefront_intentional="app/[countryCode]/(main)/page.tsx
+app/[countryCode]/(main)/search/page.tsx
 modules/home/components/hero/index.tsx
 modules/layout/templates/nav/index.tsx
 modules/layout/templates/nav/nav-ui.tsx
@@ -26,6 +27,11 @@ modules/products/components/product-preview/price.tsx
 modules/categories/templates/index.tsx
 modules/collections/templates/index.tsx
 modules/products/templates/index.tsx
+modules/search/components/search-bar/index.tsx
+modules/search/components/search-results/index.tsx
+modules/account/components/account-nav/index.tsx
+modules/account/templates/account-layout.tsx
+modules/checkout/components/submit-button/index.tsx
 styles/globals.css"
 storefront_root_intentional="tailwind.config.js"
 

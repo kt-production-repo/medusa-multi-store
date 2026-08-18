@@ -1,7 +1,6 @@
 "use client"
 
 import { MagnifyingGlass } from "@medusajs/icons"
-import { clx } from "@medusajs/ui"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -35,30 +34,25 @@ export default function SearchBar({
   return (
     <form
       onSubmit={handleSubmit}
-      className={clx(
-        "relative flex items-center w-full max-w-lg mx-auto",
-        className
-      )}
+      className={`relative flex items-center w-full max-w-xl mx-auto ${className}`}
       data-testid="search-bar"
     >
-      <input
-        type="search"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Escape") setQuery("")
-        }}
-        placeholder="Search products..."
-        className="w-full h-10 pl-10 pr-4 bg-ui-bg-field border rounded-md focus:outline-none focus:ring-0 focus:shadow-borders-interactive-with-active border-ui-border-base text-small-regular text-ui-fg-base placeholder:text-ui-fg-subtle"
-        aria-label="Search products"
-      />
-      <button
-        type="submit"
-        className="absolute left-3 text-ui-fg-subtle hover:text-ui-fg-base focus:outline-none"
-        aria-label="Submit search"
-      >
-        <MagnifyingGlass size={18} />
-      </button>
+      <div className="relative w-full">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-grey-50">
+          <MagnifyingGlass size={20} />
+        </div>
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setQuery("")
+          }}
+          placeholder="Search for mattresses, bedding..."
+          className="w-full h-14 pl-12 pr-6 bg-white border-2 border-grey-20 rounded-full text-base text-grey-90 placeholder:text-grey-50 focus:outline-none focus:border-brand-dark focus:ring-4 focus:ring-brand-dark/10 transition-all duration-300"
+          aria-label="Search products"
+        />
+      </div>
     </form>
   )
 }
