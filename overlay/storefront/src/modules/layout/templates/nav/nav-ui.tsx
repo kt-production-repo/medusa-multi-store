@@ -1,21 +1,22 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ShoppingBag } from "@medusajs/icons"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import CartButton from "@modules/layout/components/cart-button"
+import CartDropdown from "@modules/layout/components/cart-dropdown"
 import SideMenu from "@modules/layout/components/side-menu"
 import SearchDropdown from "@modules/layout/components/search-dropdown"
 import { StoreRegion } from "@medusajs/types"
+import { HttpTypes } from "@medusajs/types"
 import { Locale } from "@lib/data/locales"
 
 type NavUIProps = {
   regions: StoreRegion[] | null
   locales: Locale[] | null
   currentLocale: string | null
+  cart?: HttpTypes.StoreCart | null
 }
 
-export default function NavUI({ regions, locales, currentLocale }: NavUIProps) {
+export default function NavUI({ regions, locales, currentLocale, cart }: NavUIProps) {
   const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
@@ -76,7 +77,7 @@ export default function NavUI({ regions, locales, currentLocale }: NavUIProps) {
               </LocalizedClientLink>
             </div>
             <div className={`${isScrolled ? "" : "[&>*]:!border-white/40 [&>*]:!text-white"}`}>
-              <CartButton isScrolled={isScrolled} />
+              <CartDropdown cart={cart} isScrolled={isScrolled} />
             </div>
           </div>
         </nav>
