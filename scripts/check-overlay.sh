@@ -13,7 +13,9 @@ fail=0
 
 # Paths (relative to overlay dir) that are ALLOWED to collide with upstream.
 backend_intentional="medusa-config.ts"
-storefront_intentional="modules/layout/templates/nav/index.tsx
+storefront_intentional="app/[countryCode]/(main)/page.tsx
+modules/home/components/hero/index.tsx
+modules/layout/templates/nav/index.tsx
 modules/layout/templates/nav/nav-ui.tsx
 modules/layout/templates/footer/index.tsx
 modules/layout/components/side-menu/index.tsx
@@ -33,7 +35,7 @@ check() {
     rel="${f#"$overlay_dir"/}"
     if [ -e "$upstream_dir/$rel" ]; then
       # Skip files that are intentional replacements
-      if echo "$intentional" | grep -qx "$rel"; then
+      if echo "$intentional" | grep -Fqx "$rel"; then
         echo "ok         $overlay_dir/$rel (intentional replacement)"
       else
         echo "COLLISION  $overlay_dir/$rel would overwrite upstream $upstream_dir/$rel"

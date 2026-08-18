@@ -50,18 +50,18 @@ All changes go under `overlay/storefront/src/` (additive only). Upstream `apps/s
 
 ---
 
-## Phase 4: Homepage Redesign
+## Phase 4: Homepage Redesign ✅
 
 **Goal:** Transform the default homepage into a modern DTC landing page.
 
-- [ ] **4.1** Redesign Hero section: full-viewport height, large heading text overlay, CTA button (white rounded-full on dark)
-- [ ] **4.2** Add marquee/scrolling text banner below hero (CSS-only infinite scroll animation)
-- [ ] **4.3** Build product highlight cards section: 2-column grid, rounded-[40px] cards with gradient backgrounds, product image bleeding outside card, feature list with checkmark icons
-- [ ] **4.4** Build bundle/collection cards section: 2-3 column grid of `rounded-2xl` cards with border, hover state (border-brand-light + bg-brand-lighter)
-- [ ] **4.5** Build category image grid: asymmetric 2-column (desktop 4-column) with `rounded-3xl`/`rounded-[40px]` images, hover zoom effect
-- [ ] **4.6** Build "Our Promise" section: dark navy background, 4-column icon+text grid
-- [ ] **4.7** Build testimonials section: light blue background, testimonial cards
-- [ ] **4.8** Add scroll-triggered reveal animations on all sections (IntersectionObserver -> add visible class)
+- [x] **4.1** Redesign Hero section: full-viewport height, large heading text overlay, CTA button (white rounded-full on dark)
+- [x] **4.2** Add marquee/scrolling text banner below hero (CSS-only infinite scroll animation)
+- [x] **4.3** Build product highlight cards section: 2-column grid, rounded-[40px] cards with gradient backgrounds
+- [x] **4.4** Build bundle/collection cards section: 2-3 column grid of `rounded-2xl` cards with border, hover state
+- [x] **4.5** Build category image grid: asymmetric 2-column (desktop 4-column) with `rounded-3xl`/`rounded-[40px]` images
+- [x] **4.6** Build "Our Promise" section: dark navy background, 4-column icon+text grid
+- [x] **4.7** Build testimonials section: light blue (`#d3e4cd`) background, testimonial cards
+- [x] **4.8** Add scroll-triggered reveal animations on all sections (IntersectionObserver -> add visible class)
 
 **Verify:** Homepage loads with all sections. Animations trigger on scroll. Responsive on mobile/tablet/desktop.
 
