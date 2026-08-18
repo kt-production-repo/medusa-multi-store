@@ -15,6 +15,7 @@ fail=0
 backend_intentional="medusa-config.ts"
 storefront_intentional="modules/layout/templates/nav/index.tsx
 modules/layout/templates/nav/nav-ui.tsx
+modules/layout/templates/footer/index.tsx
 modules/layout/components/side-menu/index.tsx
 modules/layout/components/cart-button/index.tsx
 modules/layout/components/cart-dropdown/index.tsx

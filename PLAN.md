@@ -36,15 +36,15 @@ All changes go under `overlay/storefront/src/` (additive only). Upstream `apps/s
 
 ---
 
-## Phase 3: Footer Redesign
+## Phase 3: Footer Redesign ✅
 
 **Goal:** Replace the minimal footer with a rich, dark-themed footer matching mattsleeps.
 
-- [ ] **3.1** Redesign footer layout: dark navy background, 2-column (left: logo + newsletter, right: link columns)
-- [ ] **3.2** Add newsletter subscribe form: rounded-full input with placeholder styling, blue submit button
-- [ ] **3.3** Style link columns: section headings (muted white, bold), links with hover underline animation
-- [ ] **3.4** Add payment method icons row
-- [ ] **3.5** Add brand tagline at bottom (`text-4xl lg:text-5xl font-bold`)
+- [x] **3.1** Redesign footer layout: dark navy (`bg-brand-dark`) background, 2-column (left: logo + newsletter, right: link columns)
+- [x] **3.2** Add newsletter subscribe form: rounded-full input with `bg-white/10`, blue submit button
+- [x] **3.3** Style link columns: section headings (`text-white/50`, bold, uppercase), links with `nav-link` hover underline animation
+- [x] **3.4** Add payment method row: pills with `bg-white/5`, border, rounded-full
+- [x] **3.5** Add brand tagline at bottom (`text-4xl lg:text-5xl font-bold text-white/10`)
 
 **Verify:** Footer matches reference layout. Newsletter form validates. Links work.
 
