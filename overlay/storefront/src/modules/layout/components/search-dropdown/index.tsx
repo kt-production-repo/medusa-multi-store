@@ -140,6 +140,7 @@ export default function SearchDropdown() {
                             src={product.thumbnail}
                             alt={product.title}
                             fill
+                            sizes="48px"
                             className="object-cover"
                           />
                         ) : (
