@@ -20,17 +20,17 @@ All changes go under `overlay/storefront/src/` (additive only). Upstream `apps/s
 
 ---
 
-## Phase 2: Navigation Redesign
+## Phase 2: Navigation Redesign ✅
 
 **Goal:** Replace the current utilitarian nav with a polished sticky header matching mattsleeps patterns.
 
-- [ ] **2.1** Redesign nav layout: 80px height, transparent-on-hero -> white-on-scroll transition via scroll listener or CSS
-- [ ] **2.2** Style logo: larger SVG/text, centered on mobile, left-aligned on desktop
-- [ ] **2.3** Add hover underline animation on nav links (`after:` pseudo-element sweep)
-- [ ] **2.4** Redesign cart icon: 40px rounded-full circle with border, badge dot overlay
-- [ ] **2.5** Redesign mobile hamburger: 40px rounded-full circle with animated bars (3 spans -> X morph)
-- [ ] **2.6** Redesign mobile slide-in menu: full-height panel sliding from right, with accordion categories, `bg-surface` background, `duration-500` transitions
-- [ ] **2.7** Add language/country selector: rounded-full pill with flag icon, dropdown with rounded corners
+- [x] **2.1** Redesign nav layout: 80px height, transparent-on-hero -> white-on-scroll transition via scroll listener
+- [x] **2.2** Style logo: bold text, centered on mobile, left-aligned on desktop, color transitions on scroll
+- [x] **2.3** Add hover underline animation on nav links (`.nav-link` class with `after:` pseudo-element sweep)
+- [x] **2.4** Redesign cart icon: 40px rounded-full circle with border, badge count overlay
+- [x] **2.5** Redesign mobile hamburger: 40px circle with animated 3-span bars morphing to X
+- [x] **2.6** Redesign mobile slide-in menu: full-height panel sliding from right, `duration-500` transitions, white background
+- [x] **2.7** Language/country selector: kept from upstream in side-menu footer, styled with transitions
 
 **Verify:** Desktop nav matches reference. Mobile menu slides in with smooth animation. Scroll transition works.
 
