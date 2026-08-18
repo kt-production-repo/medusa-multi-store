@@ -38,6 +38,7 @@ COPY apps/storefront/ ./
 # serve a stale cached image even when overlay files change.
 ARG CACHEBUST=1
 COPY overlay/storefront/src/ ./src/
+COPY overlay/storefront/tailwind.config.js ./tailwind.config.js
 
 # check-env-variables.js hard-exits the build if the publishable key is
 # absent, and NEXT_PUBLIC_* values are inlined into the client bundle.

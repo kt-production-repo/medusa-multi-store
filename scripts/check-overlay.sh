@@ -13,7 +13,9 @@ fail=0
 
 # Paths (relative to overlay dir) that are ALLOWED to collide with upstream.
 backend_intentional="medusa-config.ts"
-storefront_intentional="modules/layout/templates/nav/index.tsx"
+storefront_intentional="modules/layout/templates/nav/index.tsx
+styles/globals.css"
+storefront_root_intentional="tailwind.config.js"
 
 check() {
   local overlay_dir="$1" upstream_dir="$2" intentional="$3"
@@ -44,6 +46,19 @@ check overlay/backend/src apps/backend/src "$backend_intentional"
 echo
 echo "== storefront src overlay (additive only) =="
 check overlay/storefront/src apps/storefront/src "$storefront_intentional"
+
+echo
+echo "== storefront root overlay (intentional replacements) =="
+for f in tailwind.config.js; do
+  if [ -e "apps/storefront/$f" ]; then
+    if echo "$storefront_root_intentional" | grep -qx "$f"; then
+      echo "ok         overlay/storefront/$f replaces apps/storefront/$f (intentional replacement)"
+    else
+      echo "COLLISION  overlay/storefront/$f would overwrite upstream apps/storefront/$f"
+      fail=1
+    fi
+  fi
+done
 
 echo
 if [ "$fail" -ne 0 ]; then

@@ -6,15 +6,15 @@ All changes go under `overlay/storefront/src/` (additive only). Upstream `apps/s
 
 ---
 
-## Phase 1: Design Foundation
+## Phase 1: Design Foundation ✅
 
 **Goal:** Establish the new design system — colors, typography, spacing, and global styles.
 
-- [ ] **1.1** Define Tailwind color tokens in `tailwind.config.js` overlay: `brand-dark`, `brand`, `brand-light`, `brand-lighter`, `surface`, `border` (blue-based palette matching mattsleeps)
-- [ ] **1.2** Configure Tailwind font families: heading font (Inter or system sans-serif as proxy for Hurme Geometric Sans) + body font (Inter/system)
-- [ ] **1.3** Update `overlay/storefront/src/app/globals.css` with new CSS custom properties, base typography overrides, and smooth scroll behavior
-- [ ] **1.4** Add Tailwind keyframe animations: `fade-in-up`, `slide-in-right`, `accordion-open/close` (reuse existing where possible)
-- [ ] **1.5** Define reusable component classes: `.btn-primary`, `.btn-outline`, `.btn-white`, `.card`, `.section-dark`, `.section-light`
+- [x] **1.1** Define Tailwind color tokens in `tailwind.config.js` overlay: `brand-dark`, `brand`, `brand-light`, `brand-lighter`, `surface`, `border` (blue-based palette matching mattsleeps)
+- [x] **1.2** Configure Tailwind font families: heading font (Inter or system sans-serif as proxy for Hurme Geometric Sans) + body font (Inter/system)
+- [x] **1.3** Update `overlay/storefront/src/styles/globals.css` with new CSS custom properties, base typography overrides, and smooth scroll behavior
+- [x] **1.4** Add Tailwind keyframe animations: `fade-in-up`, `slide-in-right`, `marquee`, `accordion-open/close` (reuse existing where possible)
+- [x] **1.5** Define reusable component classes: `.btn-primary`, `.btn-outline`, `.btn-white`, `.card`, `.section-dark`, `.section-light`, `.nav-link`, `.reveal`, `.icon-circle`
 
 **Verify:** `check-overlay.sh` passes, Tailwind build succeeds, colors render correctly.
 
