@@ -3,6 +3,7 @@ import { listCollections } from "@lib/data/collections"
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import MedusaCTA from "@modules/layout/components/medusa-cta"
+import NewsletterForm from "@modules/layout/components/newsletter-form"
 
 export default async function Footer() {
   const { collections } = await listCollections({
@@ -27,22 +28,7 @@ export default async function Footer() {
             <p className="text-sm text-white/70">
               Subscribe to our newsletter for updates and exclusive offers.
             </p>
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="flex gap-2"
-            >
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 max-w-[350px] h-[52px] px-6 rounded-full bg-white/10 border-none text-white placeholder:text-white/50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-light"
-              />
-              <button
-                type="submit"
-                className="btn-primary btn-sm h-[52px] px-6"
-              >
-                Subscribe
-              </button>
-            </form>
+            <NewsletterForm />
           </div>
         </div>
 
