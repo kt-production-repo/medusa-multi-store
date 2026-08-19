@@ -147,3 +147,153 @@ All changes go under `overlay/storefront/src/` (additive only). Upstream `apps/s
 ### Prices
 
 **CRITICAL:** Medusa prices are stored as-is (e.g., 49.99 NOT 4999). Display directly — NEVER divide by 100.
+
+---
+
+# Backend Feature Plan (Marketplace Completion)
+
+Audit result (2026-08-19): the overlay implements the official
+`examples/marketplace` recipe exactly. Everything the `medusa` skill
+documents is present and wired (see `SKILL.md`). What is **missing** are the
+recipe's own "Next Steps" — the features that turn a working split-order
+demo into a usable marketplace. All work goes under `overlay/` (additive
+only, `check-overlay.sh` must pass), all business logic in workflows, all
+auth via the `vendor` actor type.
+
+---
+
+## Backend Phase B1: Vendor Product Management
+
+**Goal:** Vendors can fully manage their own products, not just create/list them.
+
+- [ ] **B1.1** `update-vendor-product` workflow — verify ownership via
+  `vendor_admin → vendor` link, then call `updateProductsWorkflow`; preserve the
+  `product.updated` event so the Meilisearch sync subscriber fires automatically.
+- [ ] **B1.2** `delete-vendor-product` workflow — verify ownership, then
+  `deleteProductsWorkflow` (Meilisearch cleanup already handled by the
+  `product.deleted` subscriber).
+- [ ] **B1.3** `PUT /vendors/products/:id` route + zod body schema wired in
+  `api/middlewares.ts` under the `/vendors/*` auth matcher.
+- [ ] **B1.4** `DELETE /vendors/products/:id` route (same auth).
+- [ ] **B1.5** Ownership guard: product's linked `vendor_id` must equal the
+  caller's vendor; else throw `MedusaError.Types.NOT_ALLOWED`.
+
+**Verify:** vendor edits own product (title/variant/price) → change visible in
+storefront + Meilisearch; vendor cannot update or delete another vendor's
+product (403).
+
+---
+
+## Backend Phase B2: Vendor Order Management
+
+**Goal:** Vendors can act on their split orders (fulfill, ship), not just list them.
+
+- [ ] **B2.1** Vendor order list already exists (`GET /vendors/orders`) — extend
+  it to include `fulfillments` in the `getOrdersListWorkflow` fields.
+- [ ] **B2.2** `create-vendor-fulfillment` workflow — verify the order is linked
+  to the caller's vendor, then run `createFulfillmentWorkflow` with the vendor's
+  line items only.
+- [ ] **B2.3** `POST /vendors/orders/:id/fulfill` route + validation.
+- [ ] **B2.4** `POST /vendors/orders/:id/ship` route — run
+  `createShipmentWorkflow` after fulfillment.
+- [ ] **B2.5** Ownership guard: order's `vendor_order` link must match caller's
+  vendor; child (per-vendor) orders and the single-vendor parent order are both
+  valid targets.
+
+**Verify:** vendor fulfills+ship a child order → status/fulfillment updates
+visible in Admin and storefront; vendor cannot act on another vendor's order.
+
+---
+
+## Backend Phase B3: Vendor Self-Service
+
+**Goal:** Vendors manage their own profile and admins without a super admin.
+
+- [ ] **B3.1** `GET /vendors/me` — return caller's vendor profile
+  (name/handle/logo + stats: product count, order count).
+- [ ] **B3.2** `PUT /vendors/me` — update own name/handle/logo (reuse the
+  `update-vendor` workflow, but scope the input to the caller's vendor id).
+- [ ] **B3.3** `POST /vendors/admins` — vendor can invite an additional admin to
+  their own vendor (mirror `add-vendor-admin`, vendor-scoped).
+- [ ] **B3.4** Ownership guard: all mutations resolve `vendor_id` from the
+  caller's `actor_id`, never from the request body.
+
+**Verify:** vendor updates logo/handle → reflected in Admin vendors page; vendor
+adds a second admin → that admin can log in and access the same vendor data.
+
+---
+
+## Backend Phase B4: Wire Split-Checkout Into the Live Storefront
+
+**Goal:** Real carts on the deployed store complete via `/complete-vendor`, so
+multi-vendor carts actually produce per-vendor child orders.
+
+- [ ] **B4.1** Override the storefront's cart completion to call
+  `POST /store/carts/:id/complete-vendor` instead of `/complete`.
+  (Upstream `apps/storefront` is read-only; implement under
+  `overlay/storefront/src/` — the submit handler lives in
+  `modules/checkout/components/submit-button/index.tsx`.)
+- [ ] **B4.2** Fall back to `/complete` for carts with zero vendor-linked items
+  so the split route never breaks single-vendor checkout.
+- [ ] **B4.3** Update the README §7 note that "the stock storefront still calls
+  `/complete`" once this lands.
+
+**Verify:** cart with items from 2+ vendors → one parent order + one child order
+per vendor, each linked to its vendor; single-vendor cart → parent order only.
+
+---
+
+## Backend Phase B5: Vendor Storefront Portal
+
+**Goal:** Vendor admins get a dashboard — per the recipe, only super admins can
+use the Medusa Admin, so this is a custom storefront-side app.
+
+- [ ] **B5.1** Vendor auth pages under `overlay/storefront/src/`: login +
+  register using `/auth/vendor/emailpass` (mirror the customer flow).
+- [ ] **B5.2** Vendor dashboard layout with tabs: Overview, Products, Orders,
+  Settings (self-service from Phase B3).
+- [ ] **B5.3** Products tab: list/create/edit/delete via `/vendors/products*`.
+- [ ] **B5.4** Orders tab: list/fulfill/ship via `/vendors/orders*`.
+- [ ] **B5.5** Route guard: vendor-only pages redirect anonymous/customers to
+  the vendor login.
+
+**Verify:** a vendor admin can log in on `shop.*/vendor`, manage their products
+and fulfill their orders end-to-end, with no super-admin account involved.
+
+---
+
+## Backend Phase B6: Link Additional Models to Vendors (Optional)
+
+**Goal:** Extend the vendor links beyond product/order so vendors can control
+more of their storefront presence.
+
+- [ ] **B6.1** Vendor ↔ sales channel link (`links/vendor-sales-channel.ts`) and
+  replace the hard-coded `default_sales_channel_id` in
+  `create-vendor-product` with the vendor's linked channel.
+- [ ] **B6.2** Vendor ↔ shipping profile / fulfillment set link, so vendors can
+  offer their own shipping options.
+- [ ] **B6.3** Update `create-vendor-orders` grouping to respect per-vendor
+  shipping methods if/when fulfillment sets exist.
+
+**Verify:** products created by a vendor appear only in the vendor's linked
+sales channel; vendor-specific shipping methods surface at checkout.
+
+---
+
+## Phase 9: Final Integration & Backend Verification
+
+**Goal:** Full end-to-end marketplace verification and cleanup.
+
+- [ ] **9.1** `./scripts/check-overlay.sh` passes after all new overlay files.
+- [ ] **9.2** Backend typecheck + build succeed (`cd apps/backend && yarn build`).
+- [ ] **9.3** Multi-vendor smoke test: two vendors, two products each, one cart
+  mixing both → split orders, per-vendor fulfill/ship, Meilisearch reflects all
+  edits/deletes.
+- [ ] **9.4** Storefront portal test: register → create vendor → add product →
+  receive order → fulfill/ship.
+- [ ] **9.5** Update `README.md` vendor endpoint tables + `SKILL.md` overlay tree
+  with any new routes/workflows.
+- [ ] **9.6** Commit and push to both remotes (origin + gitea).
+
+**Verify:** Marketplace behaves correctly for admins, vendors and customers;
+docs match the code; overlay stays additive-only.
