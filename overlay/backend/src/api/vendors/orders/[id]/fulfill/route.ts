@@ -2,10 +2,10 @@ import {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
-import createVendorFulfillmentWorkflow from "../../../../../workflows/marketplace/create-vendor-fulfillment"
+import createVendorFulfillmentWorkflow, { CreateVendorFulfillmentWorkflowInput } from "../../../../../workflows/marketplace/create-vendor-fulfillment"
 
 export const POST = async (
-  req: AuthenticatedMedusaRequest,
+  req: AuthenticatedMedusaRequest<CreateVendorFulfillmentWorkflowInput["fulfillment"]>,
   res: MedusaResponse
 ) => {
   const { result } = await createVendorFulfillmentWorkflow(req.scope)

@@ -4,7 +4,7 @@ import {
 } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { z } from "@medusajs/framework/zod"
-import addVendorAdminWorkflow from "../../../../workflows/marketplace/add-vendor-admin"
+import addVendorAdminWorkflow from "../../../workflows/marketplace/add-vendor-admin"
 
 export const PostVendorAddAdminSchema = z.strictObject({
   email: z.email(),

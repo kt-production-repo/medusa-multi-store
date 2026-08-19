@@ -6,7 +6,7 @@ import {
 } from "@medusajs/framework/http"
 import { z } from "@medusajs/framework/zod"
 import { AdminCreateProduct, AdminUpdateProduct } from "@medusajs/medusa/api/admin/products/validators"
-import { AdminOrderCreateFulfillment, AdminOrderCreateShipment } from "@medusajs/medusa/api/admin/orders/validators"
+import { AdminOrderCreateFulfillment, OrderCreateShipment } from "@medusajs/medusa/api/admin/orders/validators"
 import { PostVendorCreateSchema } from "./vendors/route"
 import { PostStoreProductSearchSchema } from "./store/products/search/route"
 import {
@@ -84,7 +84,7 @@ export default defineMiddlewares({
       method: ["POST"],
       middlewares: [
         validateAndTransformBody(
-          AdminOrderCreateShipment.extend({
+          OrderCreateShipment.extend({
             fulfillment_id: z.string(),
           })
         ),

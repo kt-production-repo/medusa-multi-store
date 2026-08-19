@@ -2,10 +2,10 @@ import {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
-import createVendorShipmentWorkflow from "../../../../../workflows/marketplace/create-vendor-shipment"
+import createVendorShipmentWorkflow, { CreateVendorShipmentWorkflowInput } from "../../../../../workflows/marketplace/create-vendor-shipment"
 
 export const POST = async (
-  req: AuthenticatedMedusaRequest,
+  req: AuthenticatedMedusaRequest<CreateVendorShipmentWorkflowInput["shipment"] & { fulfillment_id: string }>,
   res: MedusaResponse
 ) => {
   const { fulfillment_id, ...shipment } = req.validatedBody

@@ -2,11 +2,11 @@ import {
   AuthenticatedMedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
-import updateVendorProductWorkflow from "../../../../workflows/marketplace/update-vendor-product"
+import updateVendorProductWorkflow, { UpdateVendorProductWorkflowInput } from "../../../../workflows/marketplace/update-vendor-product"
 import deleteVendorProductWorkflow from "../../../../workflows/marketplace/delete-vendor-product"
 
 export const POST = async (
-  req: AuthenticatedMedusaRequest,
+  req: AuthenticatedMedusaRequest<UpdateVendorProductWorkflowInput["update"]>,
   res: MedusaResponse
 ) => {
   const { result } = await updateVendorProductWorkflow(req.scope)
