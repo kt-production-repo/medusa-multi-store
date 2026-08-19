@@ -328,15 +328,21 @@ Vendor endpoints added by the overlay (authenticated as a vendor):
 |--------|-------|---------|
 | `POST` | `/vendors` | Create a vendor + first admin |
 | `GET`/`POST` | `/vendors/products` | List / create that vendor's products |
-| `GET` | `/vendors/orders` | That vendor's split orders |
+| `POST` | `/vendors/products/:id` | Update that vendor's product (ownership-guarded) |
+| `DELETE` | `/vendors/products/:id` | Delete that vendor's product (ownership-guarded) |
+| `GET` | `/vendors/orders` | That vendor's split orders (incl. fulfillments) |
+| `POST` | `/vendors/orders/:id/fulfill` | Fulfill one of that vendor's orders |
+| `POST` | `/vendors/orders/:id/ship` | Ship a fulfillment of that vendor's order |
+| `GET`/`POST` | `/vendors/me` | That vendor's profile (name/handle/logo + stats) |
+| `POST` | `/vendors/admins` | Invite an additional admin to that vendor |
 | `DELETE` | `/vendors/admins/:id` | Remove one of that vendor's admins |
 | `POST` | `/store/carts/:id/complete-vendor` | Checkout, splitting one cart into per-vendor orders |
 
-> **Note:** the stock storefront (`apps/storefront`, vendored read-only) still
-> completes carts with the standard `POST /store/carts/:id/complete`. The
-> split-order route only fires for a custom storefront integration that calls
-> `/complete-vendor` — see `PLAN.md`. `apps/storefront` cannot be patched
-> (AGENTS.md additive-only rule).
+> **Note:** the storefront now completes carts via `/complete-vendor` (the
+> overlay `payment-button` + `place-vendor-order.ts` server action), falling
+> back to `/complete` for carts with no vendor-linked items — see `PLAN.md`
+> Phase B4. `apps/storefront` stays byte-identical to upstream (AGENTS.md
+> additive-only rule); the override lives in `overlay/storefront/src/`.
 
 Admin-scoped routes (used by the Admin UI pages under `overlay/backend/src/admin/`):
 

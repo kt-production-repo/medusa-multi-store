@@ -78,8 +78,10 @@ Existing overlay paths (the official marketplace recipe + meilisearch):
 
 ```
 overlay/backend/src/
-├── api/vendors/…                 /vendors, /vendors/products, /vendors/orders,
-│                                /vendors/admins/:id
+├── api/vendors/…                 /vendors, /vendors/products, /vendors/products/:id,
+│                                /vendors/orders, /vendors/orders/:id/fulfill,
+│                                /vendors/orders/:id/ship, /vendors/me,
+│                                /vendors/admins, /vendors/admins/:id
 ├── api/admin/…                   /admin/vendors, /admin/vendors/admins,
 │                                /admin/products/:id/vendor,
 │                                /admin/orders/:id/vendor,
@@ -94,11 +96,17 @@ overlay/backend/src/
 ├── workflows/marketplace/        create-vendor, create-admin-vendor,
 │                                add-vendor-admin, update-vendor,
 │                                delete-vendor-admin, create-vendor-product,
-│                                create-vendor-orders (split-order)
+│                                update-vendor-product, delete-vendor-product,
+│                                create-vendor-orders (split-order),
+│                                create-vendor-fulfillment, create-vendor-shipment
 ├── workflows/meilisearch/        reindex / delete-index-documents
 └── admin/                        Admin UI: vendors pages, widgets,
                                  vendor-admins, settings/meilisearch
-overlay/storefront/src/           /search page + search bar/results (Meilisearch)
+overlay/storefront/src/           /search page + search bar/results (Meilisearch);
+                                 /vendor portal (login, dashboard: overview,
+                                 products, orders, settings) — payment-button
+                                 override + place-vendor-order.ts complete cart
+                                 via /complete-vendor with /complete fallback
 ```
 
 Vendor admins are a **custom actor type** (`"vendor"`), authenticated via
@@ -295,8 +303,14 @@ Vendor-authenticated (`/vendors*`):
 |---|---|---|
 | `POST` | `/vendors` | Create vendor + first admin |
 | `GET` `POST` | `/vendors/products` | List / create that vendor's products |
-| `GET` | `/vendors/orders` | That vendor's split orders |
+| `POST` `DELETE` | `/vendors/products/:id` | Update / delete that vendor's product (ownership-guarded) |
+| `GET` | `/vendors/orders` | That vendor's split orders (incl. fulfillments) |
+| `POST` | `/vendors/orders/:id/fulfill` | Fulfill that vendor's order |
+| `POST` | `/vendors/orders/:id/ship` | Ship a fulfillment of that vendor's order |
+| `GET` `POST` | `/vendors/me` | That vendor's profile (+ stats) / update own profile |
+| `POST` | `/vendors/admins` | Invite an admin to that vendor |
 | `DELETE` | `/vendors/admins/:id` | Remove one of that vendor's admins |
+| `POST` | `/store/carts/:id/complete-vendor` | Checkout, splitting one cart into per-vendor orders |
 
 Admin-authenticated (`/admin*`):
 

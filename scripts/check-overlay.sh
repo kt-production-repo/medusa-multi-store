@@ -32,6 +32,7 @@ modules/search/components/search-results/index.tsx
 modules/account/components/account-nav/index.tsx
 modules/account/templates/account-layout.tsx
 modules/checkout/components/submit-button/index.tsx
+modules/checkout/components/payment-button/index.tsx
 styles/globals.css"
 storefront_root_intentional="tailwind.config.js"
 
