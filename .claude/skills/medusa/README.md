@@ -15,6 +15,21 @@ Layout inside each:
 medusa/
 ├── SKILL.md                            # the project skill (this repo)
 ├── README.md                           # this file
+├── reference/                          # vendored official docs (offline reference)
+│   ├── learn/                          #   https://docs.medusajs.com/learn/ (149 files)
+│   ├── commerce-modules/               #   https://docs.medusajs.com/resources/commerce-modules/ (135 files)
+│   ├── infrastructure-modules/         #   https://docs.medusajs.com/resources/infrastructure-modules/ (33 files)
+│   ├── integrations/                   #   https://docs.medusajs.com/resources/integrations/ (17 files)
+│   ├── how-to-tutorials/               #   https://docs.medusajs.com/resources/how-to-tutorials/ (18 files)
+│   ├── recipes/                        #   https://docs.medusajs.com/resources/recipes/ (24 files)
+│   ├── ui/                             #   https://docs.medusajs.com/ui/ (43 files)
+│   ├── medusa-cli/                     #   https://docs.medusajs.com/resources/medusa-cli/ (12 files)
+│   ├── js-sdk/                         #   https://docs.medusajs.com/resources/js-sdk/ (2 files)
+│   ├── examples/                       #   https://docs.medusajs.com/resources/examples/ (3 files)
+│   ├── admin-components/               #   https://docs.medusajs.com/resources/admin-components/ (12 files)
+│   ├── service-factory-reference/      #   https://docs.medusajs.com/resources/service-factory-reference/ (10 files)
+│   ├── nextjs-starter/                 #   https://docs.medusajs.com/resources/nextjs-starter/ (4 files)
+│   └── plugins/                        #   https://docs.medusajs.com/resources/plugins/ (1 file)
 ├── building-with-medusa/SKILL.md       # official skills, one folder each
 ├── storefront-best-practices/SKILL.md
 └── …
@@ -22,13 +37,38 @@ medusa/
 
 Skill loaders glob `**/SKILL.md` recursively, so nesting is transparent. The
 only hard requirement is that each skill's **immediate parent folder matches
-its frontmatter `name`** — which holds for all 19.
+its frontmatter `name`** — which holds for all 19. The `reference/` tree holds
+no `SKILL.md`, so it is plain documentation, not a skill.
 
 ## Project skill
 
 | Skill | Purpose |
 |-------|---------|
-| `medusa` | **This repo.** Overlay architecture, Dokploy topology, vendor API, build-vs-runtime env vars, debugging. Read this first. |
+| `medusa` | **This repo.** Overlay architecture, Dokploy topology, vendor API, build-vs-runtime env vars, debugging, plus a vendored offline copy of the official docs under `reference/`. Read this first. |
+
+## Vendored reference docs
+
+`medusa/reference/` holds an offline copy of the official Medusa
+documentation, generated from `https://docs.medusajs.com/llms-full.txt`:
+
+- `reference/learn/` — the Learn docs (`/learn/**`). One file per page; the
+  path after `learn/` maps to the URL path after `learn/`.
+- `reference/commerce-modules/` — the Commerce Modules reference
+  (`/resources/commerce-modules/**`). `<module>/index.md` + `<module>/<topic>.md`.
+- The remaining trees mirror `/resources/**` (except
+  `commerce-modules`/`integrations`/`recipes` kept under their own dirs),
+  `/ui/**`, and `/resources/plugins/**`. For `resources/` sections the
+  `resources/` prefix is dropped: `resources/infrastructure-modules/…` →
+  `reference/infrastructure-modules/…`.
+
+463 reference files total. Internal links were normalized from the
+llms-full.txt build paths (`/opt/buildhome/...`) to `docs.medusajs.com` URLs.
+
+Re-sync the whole tree by re-running the splitter over a fresh
+`llms-full.txt` download (scripts live in
+`/var/folders/gh/l7_mrc851mdgb4wlckzbsjxw0000gn/T/opencode/split_learn.py`,
+`split_commerce.py`, `split_rest.py`, `normalize_urls.py`), then copy
+`.opencode/skills` to `.claude` and `.agents` as below.
 
 ## Official skills
 

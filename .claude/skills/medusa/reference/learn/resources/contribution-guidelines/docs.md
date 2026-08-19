@@ -1,0 +1,288 @@
+# Docs Contribution Guidelines
+
+Thank you for your interest in contributing to the documentation! You will be helping the open source community and other developers interested in learning more about Medusa and using it.
+
+Making a quick fix to a page's content? You can scroll down to the bottom of the page and click on the "Edit this page" link to make quick edits directly in GitHub. If you're making bigger changes, such as adding a new page or making changes to the codebase, check out the rest of this guide.
+
+This guide is specific to contributing to the documentation. If you’re interested in contributing to Medusa’s codebase, check out the [contributing guidelines in the Medusa GitHub repository](https://github.com/medusajs/medusa/blob/develop/CONTRIBUTING.md).
+
+## What Can You Contribute?
+
+You can contribute to the Medusa documentation in the following ways:
+
+- Fixes to existing content. This includes small fixes like typos, or adding missing information.
+- Additions to the documentation. If you think a documentation page can be useful to other developers, you can contribute by adding it.
+  - Make sure to open an issue first in the [medusa repository](https://github.com/medusajs/medusa) to confirm that you can add that documentation page.
+- Fixes to UI components and tooling. If you find a bug while browsing the documentation, you can contribute by fixing it.
+
+***
+
+## Documentation Workspace
+
+Medusa's documentation projects are all part of the documentation `yarn` workspace, which you can find in the [medusa repository](https://github.com/medusajs/medusa) under the `www` directory.
+
+The workspace has the following two directories:
+
+- `apps`: this directory holds the different documentation websites and projects. All projects are built with [Next.js 15](https://nextjs.org/).
+  - `book`: includes the codebase and content for the [main Medusa documentation](https://docs.medusajs.com/learn).
+  - `resources`: includes the codebase and content for the resources documentation, which powers different sections of the docs such as the [Integrations](https://docs.medusajs.com/resources/integrations) or [How-to & Tutorials](https://docs.medusajs.com/resources/how-to-tutorials) sections.
+  - `api-reference`: includes the codebase and content for the [API reference](https://docs.medusajs.com/api/store).
+  - `ui`: includes the codebase and content for the [Medusa UI documentation](https://docs.medusajs.com/ui).
+  - `user-guide`: includes the codebase and content for the [user guide documentation](https://docs.medusajs.com/user-guide).
+  - `cloud`: includes the codebase and content for the [Medusa Cloud documentation](https://docs.medusajs.com/cloud).
+- `packages`: this directory holds the shared packages and components necessary for the development of the projects in the `apps` directory.
+  - `docs-ui` includes the shared React components between the different apps.
+  - `remark-rehype-plugins` includes Remark and Rehype plugins used by the documentation projects.
+
+### Setup the Documentation Workspace
+
+### Prerequisites
+
+- [Node.js v20.19.0+ or v22.12.0+](https://nodejs.org/en/download)
+- [Yarn v3+](https://v3.yarnpkg.com/getting-started/install)
+
+In the `www` directory, run the following command to install the dependencies:
+
+```bash
+yarn install
+```
+
+Then, run the following command to build packages under the `www/packages` directory:
+
+```bash
+yarn build
+```
+
+After that, you can change into the directory of any documentation project under the `www/apps` directory and run the `dev` command to start the development server.
+
+***
+
+## Documentation Content
+
+All documentation projects are built with Next.js. The content is written in MDX files.
+
+### Medusa Main Docs Content
+
+The content of the Medusa main docs are under the `www/apps/book/app` directory.
+
+### Medusa Resources Content
+
+The content of all pages under the `/resources` path are under the `www/apps/resources/app` directory.
+
+Documentation pages under the `www/apps/resources/references` directory are generated automatically from the source code under the `packages/medusa` directory. So, you can't directly make changes to them. Instead, you'll have to make changes to the comments in the original source code.
+
+### API Reference
+
+The API reference's content is split into two types:
+
+1. Static content, which are the content related to getting started, expanding fields, and more. These are located in the `www/apps/api-reference/markdown` directory. They are MDX files.
+2. OpenAPI specs that are shown to developers when checking the reference of an API Route. These are generated from OpenApi Spec comments, which are under the `www/utils/generated/oas-output` directory.
+
+### Medusa UI Documentation
+
+The content of the Medusa UI documentation are located under the `www/apps/ui/app` directory. They are MDX files.
+
+The UI documentation also shows code examples, which are under the `www/apps/ui/specs/examples` directory.
+
+The UI component props are generated from the source code and placed into the `www/apps/ui/specs/components` directory. To contribute to these props and their comments, check the comments in the source code under the `packages/design-system/ui` directory.
+
+### Medusa User Guide
+
+The content of all pages under the `/user-guide` path are under the `www/apps/user-guide/app` directory.
+
+### Medusa Cloud Docs
+
+The content of all pages under the `/cloud` path are under the `www/apps/cloud/app` directory.
+
+***
+
+## Run Documentation Projects Locally
+
+To run a documentation project locally, such as `book` or `resources`, change into the directory of that project.
+
+Then, copy the `.env.example` file to a new `.env.local` file. This should sufficiently set up the environment variables needed to run the project.
+
+Finally, run the `dev` command to start the development server. For example, in the `book` project:
+
+```bash
+npm run dev
+```
+
+You can then access the documentation site by going to the following URLs in your browser:
+
+- `book`: `http://localhost:3000`
+- `resources`: `http://localhost:3000/resources`
+- `api-reference`: `http://localhost:3000/api` (Store API routes at `/api/store` and Admin API routes at `/api/admin`)
+- `ui`: `http://localhost:3000/ui`
+- `user-guide`: `http://localhost:3000/user-guide`
+- `cloud`: `http://localhost:3000/cloud`
+
+When you access the documentation site, you might see errors or warning messages related to missing environment variables of services like Algolia. You can ignore these errors and warnings when working locally.
+
+### Prep Command
+
+Each documentation project has a `prep` command that runs scripts to prepare data useful for development or production.
+
+The common task that `prep` does is generate the sidebar files, which is useful for both development and production. If you make changes to sidebar items, make sure to run the `prep` command before starting the development server.
+
+```bash
+npm run prep
+```
+
+In the `resources` project, you may need to run `prep:turbo --force` for tag changes:
+
+```bash title="www/apps/resources"
+npm run prep:turbo -- --force
+```
+
+***
+
+## Style Guide
+
+When you contribute to the documentation content, make sure to follow the [documentation style guide](https://www.notion.so/Style-Guide-Docs-fad86dd1c5f84b48b145e959f36628e0).
+
+***
+
+## How to Contribute
+
+If you’re fixing small errors in an existing documentation page, you can scroll down to the end of the page and click on the “Edit this page” link. You’ll be redirected to the GitHub edit form of that page and you can make edits directly and submit a pull request (PR).
+
+If you’re adding a new page or contributing to the codebase, fork the repository, create a new branch, and make all changes necessary in your repository. Then, once you’re done, create a PR in the Medusa repository.
+
+### Base Branch
+
+When you make an edit to an existing documentation page or fork the repository to make changes to the documentation, create a new branch.
+
+Documentation contributions always use `develop` as the base branch. Make sure to also open your PR against the `develop` branch.
+
+### Branch Name
+
+Make sure that the branch name starts with `docs/`. For example, `docs/fix-services`. Vercel deployed previews are only triggered for branches starting with `docs/`.
+
+### Pull Request Conventions
+
+When you create a pull request, prefix the title with `docs:` or `docs(PROJECT_NAME):`, where `PROJECT_NAME` is the name of the documentation project this pull request pertains to. For example, `docs(ui): fix titles`.
+
+In the body of the PR, explain clearly what the PR does. If the PR solves an issue, use [closing keywords](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword) with the issue number. For example, `Closes #1333`.
+
+#### Prep Command Before PR
+
+If you made changes to the content of any documentation project, you must run the [prep](#prep-command) command in the `book` project before creating a pull request. It will generate the `llms-full.txt` file with the updated content. You should also run it in the project you made changes to, as that will generate other necessary files for the project, such as edit dates.
+
+```bash title="www/apps/book"
+npm run prep
+```
+
+Some files are ignored by the script. So, if you don't see that the `llms-full.txt` file is updated after running the `prep` command, you can safely ignore it.
+
+***
+
+## Images
+
+If you are adding images to a documentation page, you can host the image on [Imgur](https://imgur.com) for free to include it in the PR. Our team will later upload it to our image hosting CDN.
+
+***
+
+## NPM and Yarn Code Blocks
+
+If you’re adding code blocks that use NPM and Yarn, you must add the `npm2yarn` meta field.
+
+For example:
+
+````md
+```bash npm2yarn
+npm run start
+```
+````
+
+The code snippet must be written using NPM.
+
+### Global Option
+
+When a command uses the global option `-g`, add it at the end of the NPM command to ensure that it’s transformed to a Yarn command properly. For example:
+
+```bash
+npm install @medusajs/cli -g
+```
+
+***
+
+## Linting with Vale
+
+Medusa uses [Vale](https://vale.sh/) to lint documentation pages and perform checks on incoming PRs into the repository.
+
+### Result of Vale PR Checks
+
+You can check the result of running the "lint" action on your PR by clicking the Details link next to it. You can find there all errors that you need to fix.
+
+### Run Vale Locally
+
+If you want to check your work locally, you can do that by:
+
+1. [Installing Vale](https://vale.sh/docs/vale-cli/installation/) on your machine.
+2. Changing to the `www/vale` directory:
+
+```bash
+cd www/vale
+```
+
+3\. Running the `run-vale` script:
+
+```bash
+# to lint content for the main documentation
+./run-vale.sh book/app/learn error resources
+# to lint content for the resources documentation
+./run-vale.sh resources/app error
+# to lint content for the API reference
+./run-vale.sh api-reference/markdown error
+# to lint content for the Medusa UI documentation
+./run-vale.sh ui/app error
+# to lint content for the user guide
+./run-vale.sh user-guide/app error
+```
+
+***
+
+## Linting with ESLint
+
+Medusa uses ESlint to lint code blocks both in the content and the code base of the documentation apps.
+
+### Linting Content with ESLint
+
+Each PR runs through a check that lints the code in the content files using ESLint. The action's name is `content-eslint`.
+
+If you want to check content ESLint errors locally and fix them, you can do that by:
+
+1\. Install the dependencies in the `www` directory:
+
+```bash
+yarn install
+```
+
+2\. Run the turbo command in the `www` directory or the specific documentation's directory (for example, `www/apps/book`):
+
+```bash
+turbo run lint:content
+```
+
+This will fix any fixable errors, and show errors that require your action.
+
+### Linting Code with ESLint
+
+Each PR runs through a check that lints the code in the content files using ESLint. The action's name is `code-docs-eslint`.
+
+If you want to check code ESLint errors locally and fix them, you can do that by:
+
+1\. Install the dependencies in the `www` directory:
+
+```bash
+yarn install
+```
+
+2\. Run the turbo command in the `www` directory or the specific documentation's directory (for example, `www/apps/book`):
+
+```bash
+yarn lint
+```
+
+This will fix any fixable errors, and show errors that require your action.

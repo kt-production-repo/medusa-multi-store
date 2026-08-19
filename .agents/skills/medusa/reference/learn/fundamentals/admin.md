@@ -1,0 +1,52 @@
+# Admin Development
+
+In this chapter, you'll learn about the Medusa Admin dashboard and the possible ways to customize it.
+
+To explore the Medusa Admin's commerce features, check out the [User Guide](https://docs.medusajs.com/user-guide). These user guides are designed for merchants and provide the steps to perform any task within the Medusa Admin.
+
+## What is the Medusa Admin?
+
+The Medusa Admin is an intuitive dashboard that allows merchants to manage their ecommerce store. It provides management features related to products, orders, customers, and more.
+
+The Medusa Admin is built with [Vite v7](https://v7.vite.dev/). When you [install the Medusa application](https://docs.medusajs.com/learn/installation), you also install the Medusa Admin. Then, when you start the Medusa application, you can access the Medusa Admin at `http://localhost:9000/app`.
+
+If you don't have an admin user, use the [Medusa CLI](https://docs.medusajs.com/resources/medusa-cli/commands/user) to create one.
+
+The Medusa Admin was migrated from Vite v5 to v7.3.6 and `react-router-dom` v6 to v7.18.2 in [Medusa v2.19.0](https://github.com/medusajs/medusa/releases/tag/v2.19.0).
+
+As of that version, the Medusa Admin supports Chrome v107+, Edge v107+, Firefox v104+, and Safari v16+. If you need to support older browsers, change the `build.target` option in the [admin.vite configuration](https://docs.medusajs.com/learn/configurations/medusa-config#vite).
+
+If your project installs `react-router-dom` directly, update it to v7. Learn more in the [Admin Routing Customizations](https://docs.medusajs.com/learn/fundamentals/admin/routing) chapter.
+
+***
+
+## How to Customize the Medusa Admin?
+
+You can customize the Medusa Admin dashboard by:
+
+- Adding new sections to existing pages using [Widgets](https://docs.medusajs.com/learn/fundamentals/admin/widgets).
+- Adding new pages using [UI Routes](https://docs.medusajs.com/learn/fundamentals/admin/ui-routes).
+
+The next chapters will cover these two topics in detail.
+
+### What You Can't Customize in the Medusa Admin
+
+You can't customize the admin dashboard's layout, design, or the content of the existing pages (aside from injecting widgets). You also can't change the Medusa logo used in the admin dashboard.
+
+If your use case requires heavy customization of the admin dashboard, you can build a custom admin dashboard using Medusa's [Admin API routes](https://docs.medusajs.com/api/admin).
+
+***
+
+## Medusa UI Package
+
+Medusa provides a Medusa UI package to facilitate your admin development through ready-made components and ensure a consistent design between your customizations and the dashboard’s design.
+
+Refer to the [Medusa UI documentation](https://docs.medusajs.com/ui) to learn how to install it and use its components.
+
+***
+
+## Admin How-to Guides
+
+The [Admin How-to Guides](https://docs.medusajs.com/resources/how-to-tutorials#admin) provides guides that walk you through common admin customizations, such as [building common admin components](https://docs.medusajs.com/resources/admin-components), or [adding third-party authentication to the admin](https://docs.medusajs.com/resources/how-to-tutorials/how-to/admin/auth).
+
+Refer to these guides for practical examples of customizing the Medusa Admin dashboard.

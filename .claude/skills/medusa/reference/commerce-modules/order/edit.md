@@ -1,0 +1,97 @@
+# Order Edit
+
+In this guide, you'll learn about order edits.
+
+Refer to this [Medusa Admin User Guide](https://docs.medusajs.com/user-guide/orders/edit) to learn how to edit an order's items using the dashboard.
+
+## What is an Order Edit?
+
+A merchant can edit an order to add new items or change the quantity of existing items.
+
+An order edit is represented by the [OrderChange data model](https://docs.medusajs.com/references/order/models/OrderChange).
+
+The `OrderChange` data model is associated with any type of change, including returns or exchanges. However, its `change_type` property distinguishes the type of change being made.
+
+For order edits, the `OrderChange`'s `change_type` is `edit`.
+
+***
+
+## Add Items in an Order Edit
+
+When a merchant adds new items to an order during editing, the item is added as an [OrderItem](https://docs.medusajs.com/references/order/models/OrderItem).
+
+Additionally, an `OrderChangeAction` is created. The [OrderChangeAction data model](https://docs.medusajs.com/references/order/models/OrderChangeAction) represents a change made by an `OrderChange`, such as adding an item.
+
+When an item is added, an `OrderChangeAction` is created with the type `ITEM_ADD`. Its `details` property stores the item's ID, price, and quantity.
+
+***
+
+## Update Items in an Order Edit
+
+A merchant can update an existing item's quantity or price.
+
+This change is recorded as an `OrderChangeAction` with the type `ITEM_UPDATE`. Its `details` property stores the item's ID, updated price, and updated quantity.
+
+***
+
+## Shipping Methods of New Items in the Edit
+
+Adding new items to the order requires adding shipping methods for those items.
+
+These shipping methods are represented by the [OrderShippingMethod data model](https://docs.medusajs.com/references/order/models/OrderShippingMethod). Also, an `OrderChangeAction` is created with the type `SHIPPING_ADD`.
+
+***
+
+## How Order Edits Impact an Order’s Version
+
+When an order edit is confirmed, the order’s [version](https://docs.medusajs.com/resources/commerce-modules/order/order-versioning) is incremented.
+
+***
+
+## Payments and Refunds for Order Edit Changes
+
+Once the order edit is confirmed, any additional payment or refund required can be made on the original order.
+
+This is determined by the comparison between the `OrderSummary` and the order's transactions, as mentioned in the [Transactions guide](https://docs.medusajs.com/resources/commerce-modules/order/transactions#checking-outstanding-amount).
+
+***
+
+## Suppress Customer Notification for an Order Edit
+
+This feature is available since Medusa [v2.19.0](https://github.com/medusajs/medusa/releases/tag/v2.19.0).
+
+When requesting an order edit, you can pass `no_notification: true` to the `requestOrderEditRequestWorkflow` to indicate that the customer should not be notified about the order edit request.
+
+The value is stored on the `OrderChange` record and forwarded to the `order-edit.requested` event's payload. Subscribers that send notifications to the customer can check `no_notification` before sending:
+
+```ts title="src/subscribers/order-edit-requested.ts"
+import {
+  SubscriberArgs,
+  SubscriberConfig,
+} from "@medusajs/framework"
+
+export default async function orderEditRequestedHandler({
+  event: { data },
+  container,
+}: SubscriberArgs<{ order_id: string; no_notification?: boolean }>) {
+  if (data.no_notification) {
+    return
+  }
+
+  // send notification to the customer
+}
+
+export const config: SubscriberConfig = {
+  event: "order-edit.requested",
+}
+```
+
+Similarly, when the order edit is confirmed, the `order-edit.confirmed` event receives a `no_notification` property that reflects the value set when the edit was originally requested.
+
+When requesting an order edit through the [JS SDK](https://docs.medusajs.com/resources/commerce-modules/order/js-sdk), pass `no_notification` in the request body:
+
+```ts
+await sdk.admin.orderEdit.request(orderId, {
+  no_notification: true,
+})
+```

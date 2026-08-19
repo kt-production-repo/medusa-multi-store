@@ -1,0 +1,87 @@
+# restore Method - Service Factory Reference
+
+This method of a module's service restores one or more records of a data model that were [soft-deleted](https://docs.medusajs.com/resources/service-factory-reference/methods/soft-delete).
+
+The method's name is of the format `restoreDataModel`, where `DataModel` is the plural pascal-case name of the data model.
+
+## Restore One Record
+
+```ts
+const restoredPosts = await postModuleService.restorePosts("123")
+```
+
+### Parameters
+
+To restore one record, pass its ID as a parameter to the method.
+
+### Returns
+
+The method returns an object, whose keys are of the format `{camel_case_data_model_name}_id`, and their values are arrays of restored records' IDs.
+
+For example, the returned object of the above example is:
+
+```json
+{
+  "post_id": ["123"],
+}
+```
+
+***
+
+## Restore Multiple Records
+
+```ts
+const restoredPosts = await postModuleService.restorePosts([
+  "123",
+  "321",
+])
+```
+
+### Parameters
+
+To restore multiple records, pass an array of IDs as a parameter to the method.
+
+### Returns
+
+The method returns an object, whose keys are of the format `{camel_case_data_model_name}_id`, and their values are arrays of restored records' IDs.
+
+For example, the returned object of the above example is:
+
+```json
+{
+  "post_id": [
+    "123",
+    "321",
+  ],
+}
+```
+
+***
+
+## Restore Records Matching Filters
+
+```ts
+const restoredPosts = await postModuleService.restorePosts({
+  name: "My Post",
+})
+```
+
+### Parameters
+
+To restore records matching a set of filters, pass an object of filters as a parameter to the method.
+
+Refer to the [Filtering](https://docs.medusajs.com/resources/service-factory-reference/tips/filtering) reference for more information on accepted filters and examples.
+
+### Returns
+
+The method returns an object, whose keys are of the format `{camel_case_data_model_name}_id`, and their values are arrays of restored records' IDs.
+
+For example, the returned object of the above example is:
+
+```json
+{
+  "post_id": [
+    "123",
+  ],
+}
+```

@@ -1,0 +1,13 @@
+# Medusa Codemods
+
+In this chapter, you'll learn about Medusa codemods and the list of available codemods.
+
+## What are Codemods?
+
+Codemods are scripts that help you automate codebase changes. They are especially useful when updating to a new version that requires large changes to your codebase.
+
+Medusa provides codemods to help you update your codebase. Use these codemods when updating to their respective versions.
+
+***
+
+## List of Medusa Codemods

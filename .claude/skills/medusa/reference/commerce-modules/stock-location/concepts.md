@@ -1,0 +1,24 @@
+# Stock Location Concepts
+
+In this guide, you’ll learn about the main concepts in the Stock Location Module.
+
+## Stock Location
+
+A stock location, represented by the [StockLocation data model](https://docs.medusajs.com/references/stock-location-next/models/StockLocation), represents a location where stock items are kept. For example, a warehouse.
+
+Each stock location can have custom metadata associated with it, allowing you to store additional information as key-value pairs.
+
+The metadata field is available since Medusa [v2.14.0](https://github.com/medusajs/medusa/releases/tag/v2.14.0).
+
+Medusa uses stock locations to provide inventory details, stored and managed by the [Inventory Module](https://docs.medusajs.com/resources/commerce-modules/inventory/concepts), per location.
+
+***
+
+## StockLocationAddress
+
+The [StockLocationAddress data model](https://docs.medusajs.com/references/stock-location-next/models/StockLocationAddress) belongs to the `StockLocation` data model. It provides detailed location information including:
+
+- **Address lines**: Primary and secondary address information
+- **Geographic details**: Country code, city, province, and postal code
+- **Contact information**: Company name and phone number
+- **Custom metadata**: Additional key-value pairs for extra location data

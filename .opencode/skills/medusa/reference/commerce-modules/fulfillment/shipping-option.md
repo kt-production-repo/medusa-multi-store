@@ -1,0 +1,90 @@
+# Shipping Option
+
+In this document, you’ll learn about shipping options and their rules.
+
+## What is a Shipping Option?
+
+A shipping option is a way of shipping an item. Each fulfillment provider offers a set of shipping options. For example, a provider may offer a shipping option for express shipping and another for standard shipping.
+
+When the customer places an order, they choose a shipping option to fulfill their items.
+
+A shipping option is represented by the [ShippingOption data model](https://docs.medusajs.com/references/fulfillment/models/ShippingOption).
+
+***
+
+## Shipping Option Price Type
+
+A shipping option's `price_type` property determines how its price is resolved:
+
+- `flat`: The price is a fixed amount stored in the [Pricing Module](https://docs.medusajs.com/resources/commerce-modules/pricing). You set the prices per currency or region when you create the shipping option. In the Medusa Admin dashboard, this type is labeled **Fixed**.
+- `calculated`: The shipping option has no stored price. Instead, its price is calculated during checkout by the shipping option's fulfillment provider. This is useful when the price depends on the cart's contents, the customer's location, or a rate returned by a third-party service.
+
+### How Calculated Prices are Resolved
+
+For a shipping option of type `calculated`, Medusa invokes the [calculatePrice method](https://docs.medusajs.com/references/fulfillment/provider) of the associated fulfillment provider to resolve the price against the cart. This happens when:
+
+- You retrieve the cart's shipping options with their prices, such as when the customer views their shipping options during checkout. For calculated options, you retrieve the price using the [Calculate Shipping Option Price API route](https://docs.medusajs.com/api/store/shipping-options/calculate-shipping-option-price).
+- The shipping method is added to the cart.
+- The cart is refreshed. Medusa refreshes the cart after most cart changes, such as adding a line item or updating the cart's address, so the price may be recalculated frequently.
+
+Medusa doesn't recalculate the price when the cart is completed and converted to an order. The order uses the last price that was stored on the shipping method.
+
+If the fulfillment provider's `calculatePrice` method throws an error, or returns a price without an amount, Medusa can't resolve the shipping option's price. This blocks the operation that triggered the calculation, such as adding the shipping method or refreshing the cart, which can prevent the customer from completing checkout. So, if you implement a custom fulfillment provider, handle errors gracefully, such as by falling back to a default price, if you don't want a failure in a third-party service to block checkout.
+
+You learn more about implementing calculated prices in a fulfillment provider in the [Create Fulfillment Module Provider](https://docs.medusajs.com/references/fulfillment/provider) reference, and how to use them during checkout in the [Storefront Shipping guide](https://docs.medusajs.com/resources/storefront-development/checkout/shipping).
+
+***
+
+## Service Zone Restrictions
+
+A shipping option is restricted by a service zone, which limits the locations where the shipping option can be used.
+
+For example, a fulfillment provider may have a shipping option that can be used in the United States and another in Canada.
+
+![A diagram showcasing the relation between shipping options and service zones.](https://res.cloudinary.com/dza7lstvk/image/upload/v1712330831/Medusa%20Resources/shipping-option-service-zone_pobh6k.jpg)
+
+Service zones can be more restrictive, such as limiting to certain cities or province codes.
+
+The province code is always in lowercase and in [ISO 3166-2 format](https://en.wikipedia.org/wiki/ISO_3166-2).
+
+![A diagram showcasing the relation between shipping options, service zones, and geo zones](https://res.cloudinary.com/dza7lstvk/image/upload/v1712331186/Medusa%20Resources/shipping-option-service-zone-city_m5sxod.jpg)
+
+***
+
+## Shipping Option Rules
+
+You can restrict shipping options by custom rules, such as the item’s weight or the customer group.
+
+You can also restrict a shipping option's price based on specific conditions. For example, you can make a shipping option's price free based on the cart total. Learn more in the Pricing Module's [Price Rules](https://docs.medusajs.com/resources/commerce-modules/pricing/price-rules#how-to-set-rules-on-a-price) guide.
+
+These rules are represented by the [ShippingOptionRule data model](https://docs.medusajs.com/references/fulfillment/models/ShippingOptionRule). Its properties define the custom rules:
+
+- `attribute`: The name of a property or table that the rule applies to. For example, `customer_group`.
+- `operator`: The operator used in the condition. For example:
+  - To allow multiple values, use the operator `in`, which validates that the provided values are in the rule’s values.
+  - To create a negation condition that considers `value` against the rule, use `nin`, which validates that the provided values aren’t in the rule’s values.
+- `value`: One or more values.
+
+![A diagram showcasing the relation between shipping option and shipping option rules.](https://res.cloudinary.com/dza7lstvk/image/upload/v1712331340/Medusa%20Resources/shipping-option-rule_oosopf.jpg)
+
+A shipping option can have multiple rules. For example, you can add rules to a shipping option so that it's available if the customer belongs to the VIP group and the total weight is less than 2000g.
+
+![A diagram showcasing how a shipping option can have multiple rules.](https://res.cloudinary.com/dza7lstvk/image/upload/v1712331462/Medusa%20Resources/shipping-option-rule-2_ylaqdb.jpg)
+
+***
+
+## Shipping Profiles and Types
+
+A shipping option belongs to a type and a profile.
+
+A shipping option type defines a group of shipping options with shared shipping characteristics. For example, a shipping option’s type may be `express`, while another may be `standard`. The type is represented by the [ShippingOptionType data model](https://docs.medusajs.com/references/fulfillment/models/ShippingOptionType).
+
+A shipping profile defines a group of items (such as products) that are shipped in a similar manner. For example, the "Standard" shipping profile applies to all products, whereas the "Digital" shipping profile applies to digital products. Shipping profiles are represented by the [ShippingProfile data model](https://docs.medusajs.com/references/fulfillment/models/ShippingProfile).
+
+***
+
+## data Property
+
+When fulfilling an item, you might use a third-party fulfillment provider that requires additional custom data to be passed along from the checkout or order creation process.
+
+The `ShippingOption` data model has a `data` property. It's an object that stores custom data relevant for creating and processing a fulfillment later.
