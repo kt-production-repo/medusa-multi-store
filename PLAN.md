@@ -301,9 +301,11 @@ sales channel; vendor-specific shipping methods surface at checkout.
   edits/deletes.
 - [ ] **9.4** Storefront portal test: register → create vendor → add product →
   receive order → fulfill/ship.
-- [ ] **9.5** Update `README.md` vendor endpoint tables + `SKILL.md` overlay tree
+- [x] **9.5** Update `README.md` vendor endpoint tables + `SKILL.md` overlay tree
   with any new routes/workflows.
-- [ ] **9.6** Commit and push to both remotes (origin + gitea).
+- [x] **9.6** Committed (`36ebf97`) and pushed to GitHub (`improve-v2`). The
+  `gitea` remote at `gitea.ktola.org/admin/medusa-multi-vendor.git` returns 404
+  (repo not found); user will configure gitea as a mirror of GitHub instead.
 
 **Verify:** Marketplace behaves correctly for admins, vendors and customers;
 docs match the code; overlay stays additive-only.
