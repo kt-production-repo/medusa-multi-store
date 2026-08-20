@@ -2,6 +2,9 @@
 #
 # Upstream code (apps/storefront) is copied in untouched.
 # Build context = repository root.
+#
+# Base: smitgadhiya-emp/medusa-plasmic (Medusa v2 DTC starter + Plasmic visual builder).
+# Package manager: npm (replaces Yarn 4 from the previous upstream).
 
 # ---------------------------------------------------------------- deps
 FROM node:20-alpine AS deps
@@ -10,28 +13,21 @@ WORKDIR /app
 
 RUN apk add --no-cache libc6-compat curl tini git
 
-COPY apps/storefront/package.json apps/storefront/yarn.lock ./
+COPY apps/storefront/package.json apps/storefront/package-lock.json ./
 
-# nextjs-starter-medusa declares packageManager yarn@4.12.0 but ships no
-# .yarn/releases, so corepack fetches it.
-RUN corepack enable && \
-    corepack prepare yarn@4.12.0 --activate && \
-    yarn config set nodeLinker node-modules && \
-    yarn install --network-timeout 600000
+RUN npm ci
 
 # ---------------------------------------------------------------- builder
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare yarn@4.12.0 --activate
-
 COPY --from=deps /app/node_modules ./node_modules
 COPY apps/storefront/ ./
 
-# Our additive storefront overlay (search UI, etc.). Copied AFTER upstream so it
-# lays on top without mutating apps/storefront — same pattern as the backend
-# Dockerfile. Paths here do not exist upstream (see scripts/check-overlay.sh).
+# Our additive storefront overlay (vendor portal, search UI, etc.). Copied AFTER
+# upstream so it lays on top without mutating apps/storefront — same pattern as
+# the backend Dockerfile. Paths here do not exist upstream (see scripts/check-overlay.sh).
 #
 # CACHEBUST: bump this value to force Docker to invalidate the overlay layer
 # and everything downstream (build + runtime). Without this, BuildKit may
@@ -44,20 +40,20 @@ COPY overlay/storefront/tailwind.config.js ./tailwind.config.js
 # absent, and NEXT_PUBLIC_* values are inlined into the client bundle.
 # Both therefore must arrive as build args, not runtime env.
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-ARG MEDUSA_BACKEND_URL
+ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_BASE_URL
 ARG NEXT_PUBLIC_DEFAULT_REGION=gb
 ARG NEXT_PUBLIC_STRIPE_KEY=
 
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY} \
-    MEDUSA_BACKEND_URL=${MEDUSA_BACKEND_URL} \
+    NEXT_PUBLIC_MEDUSA_BACKEND_URL=${NEXT_PUBLIC_MEDUSA_BACKEND_URL} \
     NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL} \
     NEXT_PUBLIC_DEFAULT_REGION=${NEXT_PUBLIC_DEFAULT_REGION} \
     NEXT_PUBLIC_STRIPE_KEY=${NEXT_PUBLIC_STRIPE_KEY} \
     NEXT_TELEMETRY_DISABLED=1 \
     NODE_ENV=production
 
-RUN yarn build
+RUN npm run build
 
 # ---------------------------------------------------------------- runtime
 FROM node:20-alpine AS runtime
@@ -86,7 +82,7 @@ USER nextjs
 # build args are re-declared here and baked in as defaults. Dokploy runtime
 # environment variables still override these.
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-ARG MEDUSA_BACKEND_URL
+ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_BASE_URL
 ARG NEXT_PUBLIC_DEFAULT_REGION=gb
 
@@ -94,12 +90,11 @@ ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PORT=8000 \
     NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY} \
-    MEDUSA_BACKEND_URL=${MEDUSA_BACKEND_URL} \
+    NEXT_PUBLIC_MEDUSA_BACKEND_URL=${NEXT_PUBLIC_MEDUSA_BACKEND_URL} \
     NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL} \
     NEXT_PUBLIC_DEFAULT_REGION=${NEXT_PUBLIC_DEFAULT_REGION}
 
 EXPOSE 8000
 
-# Upstream "start" script is `next start -p 8000`.
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["node_modules/.bin/next", "start", "-p", "8000"]
