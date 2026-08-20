@@ -181,7 +181,7 @@ first, so the two can never race on the same schema.
 - **Dockerfile Path**: `deploy/storefront/Dockerfile`
 - **Docker Context Path**: `.`
 - **Build Time Arguments** (all required at build time):
-  `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`, `MEDUSA_BACKEND_URL`,
+  `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`, `NEXT_PUBLIC_MEDUSA_BACKEND_URL`,
   `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_DEFAULT_REGION`
 - **Domains**: `shop.example.com` → **container port 8000**
 
