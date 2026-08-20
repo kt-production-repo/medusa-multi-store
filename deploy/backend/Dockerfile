@@ -16,7 +16,7 @@ FROM node:20-alpine AS builder
 # bugs in Docker. See docs.medusajs.com troubleshooting/medusa-admin.
 WORKDIR /server
 
-RUN apk add --no-cache libc6-compat python3 make g++
+RUN apk add --no-cache libc6-compat python3 make g++ curl tini git
 
 # 1. Official upstream manifest + yarn 4 runtime, for a cached install layer.
 COPY apps/backend/package.json apps/backend/yarn.lock apps/backend/.yarnrc.yml ./

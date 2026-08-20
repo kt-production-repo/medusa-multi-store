@@ -10,6 +10,8 @@
 # The index persists in the Dokploy empty volume mounted at /meili_data.
 FROM getmeili/meilisearch:v1.53.0
 
+RUN apk add --no-cache curl tini git
+
 ENV MEILI_ENV=production \
     MEILI_NO_ANALYTICS=true
 
