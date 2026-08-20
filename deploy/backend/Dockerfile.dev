@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-RUN apk add --no-cache libc6-compat python3 make g++ curl tini
+RUN apk add --no-cache libc6-compat python3 make g++ curl tini git
 
 RUN addgroup -g 1001 medusa && adduser -u 1001 -G medusa -s /bin/sh -D medusa
 
