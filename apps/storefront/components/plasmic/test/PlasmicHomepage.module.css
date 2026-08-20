@@ -1,0 +1,70 @@
+.root {
+  display: block;
+  position: relative;
+  background: #fffbfb;
+  overflow: auto;
+  height: 100%;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 0px;
+}
+.buttonShadcn__fYs2:global(.__wab_instance) {
+  max-width: 100%;
+  object-fit: cover;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  display: none;
+}
+@media (max-width: 511px) {
+  .buttonShadcn__fYs2:global(.__wab_instance) {
+    display: none;
+  }
+}
+.buttonShadcn__iwC:global(.__wab_instance) {
+  max-width: 100%;
+  object-fit: cover;
+  position: absolute;
+  left: -2810px;
+  top: 1319px;
+  display: none;
+}
+@media (max-width: 511px) {
+  .buttonShadcn__iwC:global(.__wab_instance) {
+    display: flex;
+  }
+}
+.buttonShadcn__lOqRq:global(.__wab_instance) {
+  max-width: 100%;
+  object-fit: cover;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  display: none;
+}
+@media (max-width: 1023px) {
+  .buttonShadcn__lOqRq:global(.__wab_instance) {
+    display: none;
+  }
+}
+.buttonShadcn__wvAYx:global(.__wab_instance) {
+  max-width: 100%;
+  object-fit: cover;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  display: none;
+}
+@media (max-width: 1023px) {
+  .buttonShadcn__wvAYx:global(.__wab_instance) {
+    display: none;
+  }
+}
+.dummyHomePage:global(.__wab_instance) {
+  max-width: 100%;
+  object-fit: cover;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}

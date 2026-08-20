@@ -1,0 +1,27 @@
+/* "LEGO brick / castle battlement" top edge — five teeth with notches cut into
+ * the top. Notch depth is a percentage so it scales with the button height.
+ * Applied by the `shape: "lego"` variant in button.tsx. */
+.lego {
+  clip-path: polygon(
+    0% 0%,
+    11.11% 0%,
+    11.11% 18%,
+    22.22% 18%,
+    22.22% 0%,
+    33.33% 0%,
+    33.33% 18%,
+    44.44% 18%,
+    44.44% 0%,
+    55.55% 0%,
+    55.55% 18%,
+    66.66% 18%,
+    66.66% 0%,
+    77.77% 0%,
+    77.77% 18%,
+    88.88% 18%,
+    88.88% 0%,
+    100% 0%,
+    100% 100%,
+    0% 100%
+  );
+}

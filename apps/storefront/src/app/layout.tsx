@@ -1,11 +1,10 @@
-import { getBaseURL } from "@lib/util/env"
-import { Metadata } from "next"
-import "styles/globals.css"
-
+import "../../components/plasmic/blank_project/plasmic.css"; // plasmic-import: 3RVpz8tf8oHM2jiuGYHU8J/projectcss
+import { getBaseURL } from "@lib/util/env";
+import { Metadata } from "next";
+import "styles/globals.css";
 export const metadata: Metadata = {
-  metadataBase: new URL(getBaseURL()),
-}
-
+  metadataBase: new URL(getBaseURL())
+};
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en" data-mode="light">
@@ -13,5 +12,5 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <main className="relative">{props.children}</main>
       </body>
     </html>
-  )
+  );
 }

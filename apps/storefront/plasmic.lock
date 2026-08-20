@@ -1,0 +1,140 @@
+{
+  "projects": [
+    {
+      "projectId": "3RVpz8tf8oHM2jiuGYHU8J",
+      "version": "latest",
+      "dependencies": {
+        "gmeH6XgPaBtkt51HunAo4g": "18.30.0",
+        "8PtdGodUbexNYgkuyBUcWu": "3.33.0"
+      },
+      "lang": "ts",
+      "fileLocks": [
+        {
+          "assetId": "3RVpz8tf8oHM2jiuGYHU8J",
+          "checksum": "231367c18bf1838f2f045d0fe4647bd9",
+          "type": "projectModule"
+        },
+        {
+          "assetId": "3RVpz8tf8oHM2jiuGYHU8J",
+          "checksum": "30a9d0e7511a0ed1d58a4cc17af3c159",
+          "type": "styleTokensProvider"
+        },
+        {
+          "type": "icon",
+          "assetId": "I47xIOhj0rLT",
+          "checksum": "8a66e78f275dc908204f82a99ee8a4cb"
+        },
+        {
+          "type": "icon",
+          "assetId": "mpLW5wjtyx0d",
+          "checksum": "bff4ee7d29c32970c7971d3b377ffc54"
+        },
+        {
+          "type": "image",
+          "assetId": "bULV6z071xKW",
+          "checksum": "041e8007c4060047621d22e2db11bd51"
+        },
+        {
+          "type": "globalVariant",
+          "assetId": "Exd9LxiNtfDh",
+          "checksum": "e96398a72be4ade3d880704b7710825b"
+        },
+        {
+          "assetId": "3RVpz8tf8oHM2jiuGYHU8J",
+          "checksum": "18f810063cfea21f1fc53c9c8710ff65",
+          "type": "globalContexts"
+        },
+        {
+          "type": "renderModule",
+          "assetId": "cz_5_nedk6OS",
+          "checksum": "400a52bd089c50136f7137a2214c6253"
+        },
+        {
+          "type": "cssRules",
+          "assetId": "cz_5_nedk6OS",
+          "checksum": "400a52bd089c50136f7137a2214c6253"
+        },
+        {
+          "type": "renderModule",
+          "assetId": "CYty2imRoz5Z",
+          "checksum": "4f43248fcc17f018afa9b582ba483a50"
+        },
+        {
+          "type": "cssRules",
+          "assetId": "CYty2imRoz5Z",
+          "checksum": "4f43248fcc17f018afa9b582ba483a50"
+        },
+        {
+          "assetId": "3RVpz8tf8oHM2jiuGYHU8J",
+          "type": "projectCss",
+          "checksum": "81215232422697eebf2a268c3c4a6e3b"
+        },
+        {
+          "type": "renderModule",
+          "assetId": "wa2O1Rx8yCvZ",
+          "checksum": "446aa55f04316c2533ef16e4694ac61d"
+        },
+        {
+          "type": "cssRules",
+          "assetId": "wa2O1Rx8yCvZ",
+          "checksum": "446aa55f04316c2533ef16e4694ac61d"
+        }
+      ],
+      "codegenVersion": "0.0.3"
+    },
+    {
+      "projectId": "gmeH6XgPaBtkt51HunAo4g",
+      "version": "18.30.0",
+      "dependencies": {},
+      "lang": "ts",
+      "fileLocks": [
+        {
+          "assetId": "gmeH6XgPaBtkt51HunAo4g",
+          "type": "projectCss",
+          "checksum": "06f5c23ae2592ee7a4f60c445b874bf1"
+        },
+        {
+          "assetId": "gmeH6XgPaBtkt51HunAo4g",
+          "checksum": "12432bceef704021122cb8b3d2017760",
+          "type": "projectModule"
+        },
+        {
+          "assetId": "gmeH6XgPaBtkt51HunAo4g",
+          "checksum": "17558fc177853b5e32bb65f71d30ebce",
+          "type": "styleTokensProvider"
+        }
+      ],
+      "codegenVersion": "0.0.3"
+    },
+    {
+      "projectId": "8PtdGodUbexNYgkuyBUcWu",
+      "version": "3.33.0",
+      "dependencies": {},
+      "lang": "ts",
+      "fileLocks": [
+        {
+          "assetId": "8PtdGodUbexNYgkuyBUcWu",
+          "type": "projectCss",
+          "checksum": "1c87fbcb09b518a2412fe4d1f9a37e9d"
+        },
+        {
+          "assetId": "8PtdGodUbexNYgkuyBUcWu",
+          "checksum": "871eaa1035116b72ae12753a2d93e63d",
+          "type": "globalContexts"
+        },
+        {
+          "assetId": "8PtdGodUbexNYgkuyBUcWu",
+          "checksum": "4a730a817c90d1d4e5cc48ca7ca0f665",
+          "type": "projectModule"
+        },
+        {
+          "assetId": "8PtdGodUbexNYgkuyBUcWu",
+          "checksum": "91c7d2b9fe6efcf494c70ffbcc14fdf9",
+          "type": "styleTokensProvider"
+        }
+      ],
+      "codegenVersion": "0.0.3"
+    }
+  ],
+  "cliVersion": "0.1.364"
+}
