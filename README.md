@@ -15,7 +15,7 @@ directory. Upstream updates stay a single conflict-free command.
 medusa/
 ├── apps/                          # OFFICIAL CODE — never edited
 │   ├── backend/                   #   medusajs/medusa-starter-default @ master
-│   └── storefront/                #   medusajs/nextjs-starter-medusa   @ main
+│   └── storefront/                #   smitgadhiya-emp/medusa-plasmic    @ main
 │
 ├── overlay/backend/               # our code, layered in at BUILD time only
 │   ├── medusa-config.ts           #   prod config + marketplace + meilisearch modules
@@ -455,5 +455,5 @@ the deprecated Cache module.
   [compose](https://docs.dokploy.com/docs/core/docker-compose),
   [watch paths](https://docs.dokploy.com/docs/core/watch-paths))
 - Upstream repos — [medusa-starter-default](https://github.com/medusajs/medusa-starter-default),
-  [nextjs-starter-medusa](https://github.com/medusajs/nextjs-starter-medusa),
+  [medusa-plasmic](https://github.com/smitgadhiya-emp/medusa-plasmic),
   [examples/marketplace](https://github.com/medusajs/examples/tree/main/marketplace)

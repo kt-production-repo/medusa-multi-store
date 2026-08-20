@@ -12,7 +12,7 @@ set -euo pipefail
 
 BACKEND_REMOTE="https://github.com/medusajs/medusa-starter-default.git"
 BACKEND_BRANCH="master"
-STOREFRONT_REMOTE="https://github.com/medusajs/nextjs-starter-medusa.git"
+STOREFRONT_REMOTE="https://github.com/smitgadhiya-emp/medusa-plasmic.git"
 STOREFRONT_BRANCH="main"
 
 cd "$(dirname "$0")/.."
@@ -52,7 +52,7 @@ add_subtree "apps/storefront" upstream-storefront "$STOREFRONT_REMOTE" "$STOREFR
 echo
 echo "Done. Upstream sources are in:"
 echo "  $ROOT/apps/backend      (medusa-starter-default @ $BACKEND_BRANCH)"
-echo "  $ROOT/apps/storefront   (nextjs-starter-medusa @ $STOREFRONT_BRANCH)"
+echo "  $ROOT/apps/storefront   (medusa-plasmic @ $STOREFRONT_BRANCH)"
 echo
 echo "Next: push this repo to GitHub/GitLab, then create the Dokploy services"
 echo "described in README.md."
