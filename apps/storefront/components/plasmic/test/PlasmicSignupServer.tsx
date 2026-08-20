@@ -35,10 +35,9 @@ export function generateDynamicMetadata($q: any, $ctx: PageCtx) {
   };
 }
 
-function mkPathFromRouteAndParams(
-  route: string,
-  params: Record<string, string | string[] | undefined>
-) {
+import type { ParamsRecord, PlasmicPageProps } from "@plasmicapp/react-web";
+
+function mkPathFromRouteAndParams(route: string, params: ParamsRecord) {
   if (!params) {
     return route;
   }
@@ -57,15 +56,10 @@ function mkPathFromRouteAndParams(
   return path;
 }
 
-export interface SignupServerSkeletonProps {
-  params?: Promise<Record<string, string | string[] | undefined>>;
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-}
-
 export async function makeAppRouterPageCtx({
   params,
   searchParams
-}: SignupServerSkeletonProps) {
+}: PlasmicPageProps) {
   const pageRoute = "/signup";
   const pageParams = (await params) ?? {};
   const pagePath = mkPathFromRouteAndParams(pageRoute, pageParams);
@@ -79,8 +73,7 @@ export async function makeAppRouterPageCtx({
   return ctx;
 }
 
-export type PlasmicSignupServerProps = DefaultSignupProps &
-  SignupServerSkeletonProps;
+export type PlasmicSignupServerProps = DefaultSignupProps & PlasmicPageProps;
 
 export function PlasmicSignupServer(props: PlasmicSignupServerProps) {
   return <ClientSignup {...props} />;
