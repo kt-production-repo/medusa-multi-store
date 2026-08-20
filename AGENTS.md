@@ -5,14 +5,15 @@ services. See README.md for the deployment topology.
 
 ## Never modify upstream Medusa code
 
-`apps/backend/` and `apps/storefront/` are the official Medusa repositories,
-vendored via `git subtree`. They MUST stay byte-identical to upstream so that
-`./scripts/update-upstream.sh` remains conflict-free.
+`apps/backend/` and `apps/storefront/` are vendored via `git subtree`. They
+MUST stay byte-identical to upstream so that `./scripts/update-upstream.sh`
+remains conflict-free.
 
 | Path | Rule |
 |------|------|
 | `apps/backend/**` | READ ONLY — official medusa-starter-default |
-| `apps/storefront/**` | READ ONLY — official nextjs-starter-medusa |
+| `apps/storefront/**` | READ ONLY — smitgadhiya-emp/medusa-plasmic (Medusa v2 DTC + Plasmic) |
+| `apps/storefront/components/plasmic/` | GENERATED — Plasmic Studio output, do not edit manually |
 | `overlay/backend/**` | our backend code — edit freely |
 | `deploy/**` | Dockerfiles + entrypoints — edit freely |
 | `scripts/`, `env/`, `docker-compose.yml` | ours — edit freely |
@@ -39,9 +40,9 @@ project already.
 - `NEXT_PUBLIC_*` are inlined into the client bundle at build time AND checked
   at boot by `next.config.js` → set them as **both** Dokploy Build Time
   Arguments and runtime Environment variables.
-- `MEDUSA_BACKEND_URL` for the storefront must be the **public** domain at
-  build time (the build container is not on the app network), and may be the
-  internal service name at runtime.
+- `NEXT_PUBLIC_MEDUSA_BACKEND_URL` for the storefront must be the **public**
+  domain at build time (the build container is not on the app network), and
+  may be the internal service name at runtime.
 - Admin `backendUrl` is compiled into the admin bundle, so it must be a build
   arg on the backend server service.
 
