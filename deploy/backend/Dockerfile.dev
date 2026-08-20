@@ -1,0 +1,14 @@
+FROM node:20-alpine
+
+RUN apk add --no-cache libc6-compat python3 make g++ curl tini
+
+RUN addgroup -g 1001 medusa && adduser -u 1001 -G medusa -s /bin/sh -D medusa
+
+WORKDIR /workspaces/medusa-multi-store
+
+USER medusa
+
+ENV NODE_ENV=development
+
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["sleep", "infinity"]

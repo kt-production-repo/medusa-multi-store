@@ -1,0 +1,22 @@
+services:
+  backend-server:
+    build:
+      context: .
+      dockerfile: deploy/backend/Dockerfile.dev
+    volumes:
+      - .:/workspaces/medusa-multi-store:cached
+      - backend_node_modules:/workspaces/medusa-multi-store/apps/backend/node_modules
+    working_dir: /workspaces/medusa-multi-store
+    command: sleep infinity
+    environment:
+      NODE_ENV: development
+      NODE_OPTIONS: --preserve-symlinks
+
+  backend-worker:
+    profiles: ["full"]
+
+  storefront:
+    profiles: ["full"]
+
+volumes:
+  backend_node_modules:

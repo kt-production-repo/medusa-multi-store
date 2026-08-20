@@ -1,0 +1,30 @@
+{
+    "name": "Node.js & PostgreSQL",
+    "dockerComposeFile": [
+        "../docker-compose.yml",
+        "docker-compose.override.yml"
+    ],
+    "service": "backend-server",
+    "workspaceFolder": "/workspaces/medusa-multi-store",
+
+    // Required for rootless Podman on macOS to prevent file permission errors
+    "runArgs": [
+        "--userns=keep-id"
+    ],
+
+    // Forward Medusa API server (9000) and PostgreSQL (5432)
+    "forwardPorts": [9000, 5432],
+
+    // Install backend deps, then link the marketplace overlay into src/
+    // (overlay paths don't exist upstream, so this is additive, not a conflict)
+    "postCreateCommand": "cd apps/backend && yarn install && yarn add meilisearch@0.60.0 && mkdir -p src && for d in /workspaces/medusa-multi-store/overlay/backend/src/*; do ln -sfn \"$d\" \"src/$(basename \"$d\")\"; done && cp -n /workspaces/medusa-multi-store/overlay/backend/medusa-config.ts ./medusa-config.ts"
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "dbaeumer.vscode-eslint"
+            ]
+        }
+    },
+
+    "remoteUser": "medusa"
+}

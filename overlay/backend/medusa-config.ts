@@ -181,6 +181,27 @@ module.exports = defineConfig({
   admin: {
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
     backendUrl: process.env.MEDUSA_BACKEND_URL,
+    // Dev-container fix: overlay/backend/src is symlinked into
+    // apps/backend/src, so Vite resolves files to their *real* path outside
+    // apps/backend/node_modules and outside its detected project root.
+    // preserveSymlinks keeps module resolution anchored to the symlink
+    // location; server.fs.allow whitelists the real overlay path so Vite's
+    // dev server will actually serve files that live there.
+    vite: () => {
+      return {
+        resolve: {
+          preserveSymlinks: true,
+        },
+        server: {
+          fs: {
+            allow: [
+              "/workspaces/medusa-multi-store/apps/backend",
+              "/workspaces/medusa-multi-store/overlay/backend",
+            ],
+          },
+        },
+      }
+    },
   },
   modules: [
     ...providerModules,
