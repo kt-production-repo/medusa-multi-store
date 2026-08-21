@@ -13,7 +13,7 @@ remains conflict-free.
 |------|------|
 | `apps/backend/**` | READ ONLY — official medusa-starter-default |
 | `apps/storefront/**` | READ ONLY — smitgadhiya-emp/medusa-plasmic (Medusa v2 DTC + Plasmic) |
-| `apps/storefront/components/plasmic/` | GENERATED — Plasmic Studio output, do not edit manually |
+| `apps/storefront/components/plasmic/`, `public/plasmic/`, `plasmic.json`, `plasmic.lock` | GENERATED — Plasmic sync output; the only paths the pre-commit hook allows under `apps/`. Never hand-edit; change the design in Plasmic Studio and re-run `npx plasmic sync` from `apps/storefront/` |
 | `overlay/backend/**` | our backend code — edit freely |
 | `deploy/**` | Dockerfiles + entrypoints — edit freely |
 | `scripts/`, `env/`, `docker-compose.yml` | ours — edit freely |
@@ -22,6 +22,17 @@ To change backend behaviour, add a file under `overlay/backend/src/` on a path
 that does NOT exist upstream. The Docker build copies upstream first, then
 layers the overlay on top, so the overlay wins inside the image without ever
 mutating the repo.
+
+### Editing storefront design (Plasmic)
+
+The `/home`, `/login` and `/signup` pages are Plasmic-managed (project "test"
+in `apps/storefront/plasmic.json`). Workflow: edit at studio.plasmic.app →
+`npx plasmic sync` inside `apps/storefront/` → preview with `npm run dev` →
+commit the regenerated files (the hook permits exactly these paths) → push
+and redeploy the storefront. Reusable pieces placed in Studio (`Button`,
+`LoginForm`, `SignupForm`, `PromoBadge`) are code components whose internals
+live in upstream `src/modules/**` — restyle them in code via overlay files,
+not in Studio. The Medusa pages (`/[countryCode]/...`) are not Plasmic-managed.
 
 `overlay/backend/medusa-config.ts` is the single intentional replacement of an
 upstream file, and it is replaced only inside the image.

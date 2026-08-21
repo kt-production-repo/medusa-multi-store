@@ -1,14 +1,27 @@
 #!/usr/bin/env bash
 #
-# Blocks any staged change under apps/. Both subtrees are vendored upstream
+# Blocks staged changes under apps/. Both subtrees are vendored upstream
 # code that must stay byte-identical (see AGENTS.md); customisation belongs
-# in overlay/. Activate with: git config core.hooksPath scripts/hooks
+# in overlay/.
+#
+# The one sanctioned exception is Plasmic codegen output: `npx plasmic sync`
+# rewrites these paths inside apps/storefront, so they cannot live in
+# overlay/. Hand-edits there are still forbidden — change designs in Plasmic
+# Studio and re-sync, never edit generated files.
+#
+# Activate with: git config core.hooksPath scripts/hooks
 set -euo pipefail
 
 staged=$(git diff --cached --name-only -- apps/)
-if [ -n "$staged" ]; then
+[ -z "$staged" ] && exit 0
+
+allowed='^apps/storefront/(components/plasmic/|public/plasmic/|plasmic\.json|plasmic\.lock)'
+blocked=$(printf '%s\n' "$staged" | grep -Ev "$allowed" || true)
+
+if [ -n "$blocked" ]; then
   echo "ERROR: staged changes under apps/ are forbidden (read-only upstream subtree):" >&2
-  echo "$staged" | sed 's/^/  /' >&2
+  echo "$blocked" | sed 's/^/  /' >&2
   echo "Move the change to overlay/ instead, or unstage with: git restore --staged <path>" >&2
+  echo "Allowed exception: Plasmic sync output (components/plasmic/, public/plasmic/, plasmic.json, plasmic.lock)." >&2
   exit 1
 fi
