@@ -445,6 +445,12 @@ the deprecated Cache module.
   linked to your publishable key was disabled. Re-enable it in Admin →
   Settings → Sales Channels (or `UPDATE sales_channel SET is_disabled = false`
   via the Postgres console) — no redeploy fixes this.
+- **`REDIS_URL` name dropped**: pasting the Redis internal URL without the
+  `REDIS_URL=` variable name leaves Redis unwired on both backend services.
+  Signature in boot logs: `redisUrl not found. A fake redis instance will be
+  used.`, `Local Event Bus installed`, `Locking module: Using "in-memory"`,
+  and the Admin `MemoryStore` leak warning. The API still works, but
+  server↔worker events (Meilisearch sync, order emails) silently never fire.
 - **Storefront `NEXT_PUBLIC_` names**: the prefix is part of the variable name.
   Setting `MEDUSA_BACKEND_URL` (no prefix) does nothing, and if
   `NEXT_PUBLIC_MEDUSA_BACKEND_URL` is missing at *runtime*, `lib/config.ts`
