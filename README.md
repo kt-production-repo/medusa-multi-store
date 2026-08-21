@@ -458,6 +458,16 @@ the deprecated Cache module.
   HTTP 500 with `fetch failed ... ECONNREFUSED` in the storefront logs while
   static Plasmic pages keep working. Set all four `NEXT_PUBLIC_*` values in
   BOTH Dokploy tabs: Build Time Arguments **and** Environment Variables.
+- **Plasmic "duplicate host version" warning**: build and runtime logs print
+  `Encountered likely duplicate host version: 2.0.6 vs 2.0.5`. Upstream pins
+  `@plasmicapp/data-sources` and `@plasmicapp/react-web`, which each nest a
+  private `@plasmicapp/host@2.0.6` while `2.0.5` is hoisted to the root — two
+  copies register themselves and Plasmic logs this line. It is cosmetic:
+  pages render fine. Fixing it needs an `overrides` entry in upstream's
+  `package.json`, so ignore it until the next subtree update.
+- **Root URL 404**: upstream ships `src/middleware.ts` with its region
+  redirect commented out, so `/` has no route. The overlay adds
+  `src/app/page.tsx`, which redirects `/` to `/{NEXT_PUBLIC_DEFAULT_REGION}`.
 
 ---
 
