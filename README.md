@@ -468,6 +468,18 @@ the deprecated Cache module.
 - **Root URL 404**: upstream ships `src/middleware.ts` with its region
   redirect commented out, so `/` has no route. The overlay adds
   `src/app/page.tsx`, which redirects `/` to `/{NEXT_PUBLIC_DEFAULT_REGION}`.
+- **New regions need prices**: a region added after seeding (e.g. Cambodia)
+  has no entries in the products' price sets, so add-to-cart fails with
+  `500 {"type":"unknown_error"}` for carts in that region while other regions
+  work. Fix in Admin → either switch the region's currency to one that has
+  prices (e.g. USD) or add prices per product. Carts default to the first
+  region when no `region_id` is given, so API-created carts can hit this
+  even when the site default region is fine.
+- **Soft 404 on single-segment paths**: `/garbage` matches `[countryCode]`
+  and upstream `(main)/page.tsx` renders an empty shell with HTTP 200 when
+  the country code is invalid (`return null` instead of `notFound()`).
+  Deeper paths like `/gb/garbage` return a proper 404. Cosmetic/SEO-only;
+  fixing means shadowing an upstream file, so leave it.
 
 ---
 
