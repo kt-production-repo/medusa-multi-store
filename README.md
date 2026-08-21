@@ -29,8 +29,9 @@ medusa/
 │       ├── workflows/marketplace/ #     create-vendor, create-vendor-orders, ...
 │       └── workflows/meilisearch/ #     reindex / delete-index-documents
 │
-├── overlay/storefront/            # our storefront code (additive paths only)
-│   └── src/                       #   Meilisearch search UI, /search page
+├── overlay/storefront/            # our storefront code (functional-only)
+│   └── src/                       #   vendor portal, Meilisearch search UI,
+│                                  #   split-checkout payment button
 │
 ├── deploy/
 │   ├── backend/Dockerfile         # one image, two services (server + worker)
@@ -342,7 +343,8 @@ Vendor endpoints added by the overlay (authenticated as a vendor):
 > overlay `payment-button` + `place-vendor-order.ts` server action), falling
 > back to `/complete` for carts with no vendor-linked items — see `PLAN.md`
 > Phase B4. `apps/storefront` stays byte-identical to upstream (AGENTS.md
-> additive-only rule); the override lives in `overlay/storefront/src/`.
+> read-only rule); `payment-button` is the overlay's single intentional
+> replacement, everything else is additive.
 
 Admin-scoped routes (used by the Admin UI pages under `overlay/backend/src/admin/`):
 
@@ -438,6 +440,11 @@ the deprecated Cache module.
   later logs out every session.
 - **Seeding**: `MEDUSA_SEED=true` runs once on first boot — set it back to
   `false` immediately afterwards.
+- **Disabled sales channel**: if cart creation returns
+  `400 Unable to assign cart to disabled Sales Channel`, the sales channel
+  linked to your publishable key was disabled. Re-enable it in Admin →
+  Settings → Sales Channels (or `UPDATE sales_channel SET is_disabled = false`
+  via the Postgres console) — no redeploy fixes this.
 
 ---
 
