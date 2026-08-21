@@ -49,6 +49,9 @@ add_subtree() {
 add_subtree "apps/backend"    upstream-backend    "$BACKEND_REMOTE"    "$BACKEND_BRANCH"
 add_subtree "apps/storefront" upstream-storefront "$STOREFRONT_REMOTE" "$STOREFRONT_BRANCH"
 
+# Activate the pre-commit hook that blocks staged changes under apps/.
+git config core.hooksPath scripts/hooks
+
 echo
 echo "Done. Upstream sources are in:"
 echo "  $ROOT/apps/backend      (medusa-starter-default @ $BACKEND_BRANCH)"

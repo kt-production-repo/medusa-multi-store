@@ -15,9 +15,12 @@
     // Forward Medusa API server (9000) and PostgreSQL (5432)
     "forwardPorts": [9000, 5432],
 
-    // Install backend deps, then link the marketplace overlay into src/
-    // (overlay paths don't exist upstream, so this is additive, not a conflict)
-    "postCreateCommand": "cd apps/backend && yarn install && yarn add meilisearch@0.60.0 && mkdir -p src && for d in /workspaces/medusa-multi-store/overlay/backend/src/*; do ln -sfn \"$d\" \"src/$(basename \"$d\")\"; done && cp -n /workspaces/medusa-multi-store/overlay/backend/medusa-config.ts ./medusa-config.ts"
+    // Install backend deps for local dev, then best-effort link the overlay
+    // into src/. Everything here is non-mutating: manifests are restored after
+    // `yarn add` (meilisearch lands in node_modules only), links/copy are
+    // skipped when the target already exists. apps/ must stay byte-identical
+    // to upstream — scripts/hooks/pre-commit blocks any staged change.
+    "postCreateCommand": "cd apps/backend && yarn install && yarn add meilisearch@0.60.0 && git restore package.json yarn.lock && mkdir -p src && for d in /workspaces/medusa-multi-store/overlay/backend/src/*; do b=$(basename \"$d\"); [ -e \"src/$b\" ] || ln -sn \"$d\" \"src/$b\"; done; [ -e medusa-config.ts ] || cp /workspaces/medusa-multi-store/overlay/backend/medusa-config.ts ./medusa-config.ts",
     "customizations": {
         "vscode": {
             "extensions": [

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#
+# Blocks any staged change under apps/. Both subtrees are vendored upstream
+# code that must stay byte-identical (see AGENTS.md); customisation belongs
+# in overlay/. Activate with: git config core.hooksPath scripts/hooks
+set -euo pipefail
+
+staged=$(git diff --cached --name-only -- apps/)
+if [ -n "$staged" ]; then
+  echo "ERROR: staged changes under apps/ are forbidden (read-only upstream subtree):" >&2
+  echo "$staged" | sed 's/^/  /' >&2
+  echo "Move the change to overlay/ instead, or unstage with: git restore --staged <path>" >&2
+  exit 1
+fi

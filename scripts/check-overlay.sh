@@ -28,6 +28,19 @@ check() {
   fi
   while IFS= read -r f; do
     rel="${f#"$overlay_dir"/}"
+    # Ancestor type check: if upstream has a FILE where the overlay needs a
+    # DIRECTORY, the Dockerfile's `COPY overlay/... ./src/` dies with
+    # "cannot copy to non-directory". Leaf-only checks miss this.
+    local parent="$rel"
+    while [ "$parent" != "." ]; do
+      parent="$(dirname "$parent")"
+      [ "$parent" = "." ] && break
+      if [ -e "$upstream_dir/$parent" ] && [ ! -d "$upstream_dir/$parent" ]; then
+        echo "COLLISION  $overlay_dir/$rel needs a directory at $upstream_dir/$parent, but upstream has a file there"
+        fail=1
+        break
+      fi
+    done
     if [ -e "$upstream_dir/$rel" ]; then
       # Skip files that are intentional replacements
       if echo "$intentional" | grep -Fqx "$rel"; then
@@ -42,6 +55,20 @@ check() {
   done < <(find "$overlay_dir" -type f | sort)
 }
 
+echo "== apps/ purity (upstream subtrees must contain no symlinks) =="
+# A tracked symlink under apps/ (e.g. a devcontainer convenience link pointing
+# at /workspaces/...) becomes a dangling symlink inside Docker builds and makes
+# `COPY overlay/...` fail with "cannot copy to non-directory". It also breaks
+# update-upstream.sh forever.
+bad_links=$(git ls-files -s apps/ | awk '$1 == 120000 {print $4}')
+if [ -n "$bad_links" ]; then
+  echo "$bad_links" | sed 's/^/SYMLINK    /'
+  fail=1
+else
+  echo "ok         no tracked symlinks under apps/"
+fi
+
+echo
 echo "== backend src overlay =="
 check overlay/backend/src apps/backend/src "$backend_intentional"
 
