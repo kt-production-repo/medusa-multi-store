@@ -13,28 +13,11 @@ fail=0
 
 # Paths (relative to overlay dir) that are ALLOWED to collide with upstream.
 backend_intentional="medusa-config.ts"
-storefront_intentional="app/[countryCode]/(main)/page.tsx
-app/[countryCode]/(main)/search/page.tsx
-modules/home/components/hero/index.tsx
-modules/layout/templates/nav/index.tsx
-modules/layout/templates/nav/nav-ui.tsx
-modules/layout/templates/footer/index.tsx
-modules/layout/components/side-menu/index.tsx
-modules/layout/components/cart-button/index.tsx
-modules/layout/components/cart-dropdown/index.tsx
-modules/products/components/product-preview/index.tsx
-modules/products/components/product-preview/price.tsx
-modules/categories/templates/index.tsx
-modules/collections/templates/index.tsx
-modules/products/templates/index.tsx
-modules/search/components/search-bar/index.tsx
-modules/search/components/search-results/index.tsx
-modules/account/components/account-nav/index.tsx
-modules/account/templates/account-layout.tsx
-modules/checkout/components/submit-button/index.tsx
-modules/checkout/components/payment-button/index.tsx
-styles/globals.css"
-storefront_root_intentional="tailwind.config.js"
+# The storefront overlay is functional-only: vendor portal, Meilisearch search
+# and the split-checkout payment button. Everything cosmetic comes from the
+# upstream Plasmic base. payment-button is the single intentional replacement
+# (routes cart completion through /store/carts/:id/complete-vendor).
+storefront_intentional="modules/checkout/components/payment-button/index.tsx"
 
 check() {
   local overlay_dir="$1" upstream_dir="$2" intentional="$3"
@@ -65,19 +48,6 @@ check overlay/backend/src apps/backend/src "$backend_intentional"
 echo
 echo "== storefront src overlay (additive only) =="
 check overlay/storefront/src apps/storefront/src "$storefront_intentional"
-
-echo
-echo "== storefront root overlay (intentional replacements) =="
-for f in tailwind.config.js; do
-  if [ -e "apps/storefront/$f" ]; then
-    if echo "$storefront_root_intentional" | grep -qx "$f"; then
-      echo "ok         overlay/storefront/$f replaces apps/storefront/$f (intentional replacement)"
-    else
-      echo "COLLISION  overlay/storefront/$f would overwrite upstream apps/storefront/$f"
-      fail=1
-    fi
-  fi
-done
 
 echo
 if [ "$fail" -ne 0 ]; then

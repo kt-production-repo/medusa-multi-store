@@ -25,16 +25,17 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY apps/storefront/ ./
 
-# Our additive storefront overlay (vendor portal, search UI, etc.). Copied AFTER
-# upstream so it lays on top without mutating apps/storefront — same pattern as
-# the backend Dockerfile. Paths here do not exist upstream (see scripts/check-overlay.sh).
+# Our functional storefront overlay (vendor portal, Meilisearch search,
+# split-checkout payment button). Copied AFTER upstream so it lays on top
+# without mutating apps/storefront — same pattern as the backend Dockerfile.
+# Only payment-button/index.tsx replaces an upstream file (see
+# scripts/check-overlay.sh).
 #
 # CACHEBUST: bump this value to force Docker to invalidate the overlay layer
 # and everything downstream (build + runtime). Without this, BuildKit may
 # serve a stale cached image even when overlay files change.
 ARG CACHEBUST=1
 COPY overlay/storefront/src/ ./src/
-COPY overlay/storefront/tailwind.config.js ./tailwind.config.js
 
 # check-env-variables.js hard-exits the build if the publishable key is
 # absent, and NEXT_PUBLIC_* values are inlined into the client bundle.
