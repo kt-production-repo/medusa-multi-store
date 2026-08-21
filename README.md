@@ -445,6 +445,13 @@ the deprecated Cache module.
   linked to your publishable key was disabled. Re-enable it in Admin →
   Settings → Sales Channels (or `UPDATE sales_channel SET is_disabled = false`
   via the Postgres console) — no redeploy fixes this.
+- **Storefront `NEXT_PUBLIC_` names**: the prefix is part of the variable name.
+  Setting `MEDUSA_BACKEND_URL` (no prefix) does nothing, and if
+  `NEXT_PUBLIC_MEDUSA_BACKEND_URL` is missing at *runtime*, `lib/config.ts`
+  falls back to `http://localhost:9001` — every `/[countryCode]` page returns
+  HTTP 500 with `fetch failed ... ECONNREFUSED` in the storefront logs while
+  static Plasmic pages keep working. Set all four `NEXT_PUBLIC_*` values in
+  BOTH Dokploy tabs: Build Time Arguments **and** Environment Variables.
 
 ---
 
